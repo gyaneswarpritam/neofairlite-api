@@ -60,7 +60,7 @@ emailController.sendRegisteredMail = async function (visitorId) {
             <body>
                 <h1>Welcome to NeoFairs</h1>
                 <p>Thank you for registering. Please verify your email by clicking the link below:</p>
-                <a href="http://localhost:3000/visitor-verify?token=${verificationToken}">Verify Email</a>
+                <a href="https://neofairslite.com/visitor-verify?token=${verificationToken}">Verify Email</a>
                 <p>If you did not request this, please ignore this email.</p>
             </body>
             </html>`,
