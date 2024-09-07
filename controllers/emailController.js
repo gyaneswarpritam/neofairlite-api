@@ -40,7 +40,7 @@ emailController.sendRegisteredMail = async function (visitorId) {
             visitorId,
             {
                 verificationToken: verificationToken,
-                verificationTokenExpires: Date.now() + 3600000, // 1 hour expiration
+                verificationTokenExpires: Date.now() + 2592000000, // 30 days expiration
             },
             { new: true } // Return the updated document
         );
@@ -73,18 +73,7 @@ emailController.sendRegisteredMail = async function (visitorId) {
 };
 emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     try {
-        // Generate a verification token
-        const verificationToken = crypto.randomBytes(32).toString("hex");
-
-        // Update the existing exhibitor record with the verification token and expiry time
-        const exhibitor = await Exhibitor.findByIdAndUpdate(
-            exhibitorId,
-            {
-                verificationToken: verificationToken,
-                verificationTokenExpires: Date.now() + 3600000, // 1 hour expiration
-            },
-            { new: true } // Return the updated document
-        );
+        const exhibitor = await Exhibitor.findById(exhibitorId);
 
         if (!exhibitor) {
             throw new Error("exhibitor not found");
