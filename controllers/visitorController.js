@@ -154,7 +154,6 @@ exports.getAllExhibitorHavingStall = async (req, res) => {
     try {
         // Find all stalls and get the unique list of exhibitor IDs
         const stalls = await Stall.find({}).select('exhibitor').lean();
-        console.log(stalls, "^^^^^^^^^^^^^^^^^^^^^")
         if (!stalls || stalls.length === 0) {
             return res.status(404).json({ message: 'No stalls found' });
         }
