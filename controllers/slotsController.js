@@ -1,6 +1,6 @@
 const moment = require("moment");
 const momentTimeZone = require("moment-timezone");
-const { EXB_DURATION_IN_MINUTES_PER_SLOT, EXB_END_TIME_IN_UTC, EXB_FROM_IN_UTC, EXB_START_TIME_IN_UTC, EXB_TIME_ZONE, EXB_TO_IN_UTC } = require("../constants.js");
+// const { EXB_DURATION_IN_MINUTES_PER_SLOT, EXB_END_TIME_IN_UTC, EXB_FROM_IN_UTC, EXB_START_TIME_IN_UTC, EXB_TIME_ZONE, EXB_TO_IN_UTC } = require("../constants.js");
 const Slots = require("../models/slots.js");
 const Visitor = require("../models/Visitor.js");
 const Exhibitor = require("../models/Exhibitor.js");
@@ -19,21 +19,22 @@ exports.listExhibitors = async (req, res) => {
 
 exports.listSlots = async (req, res) => {
   try {
-    const { id, timeZone: requestedTimeZone, date: requestedDate } = req.query;
+    const { id, timeZone: requestedTimeZone, date: requestedDate,
+      startTime: startTimeUTC, endTime: endTimeUTC, duration } = req.query;
 
     const slotStartDateTimeInRequestedTimeZone = momentTimeZone(
-      `${requestedDate}T${EXB_START_TIME_IN_UTC}:00Z`
+      `${requestedDate}T${startTimeUTC}:00Z`
     )
-      .tz(EXB_TIME_ZONE)
+      .tz(requestedTimeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotStartDateTimeInUTC = moment
       .tz(slotStartDateTimeInRequestedTimeZone, "UTC")
       .format("YYYY-MM-DDTHH:mm:ssZ");
 
     const slotEndDateTimeInRequestedTimeZone = momentTimeZone(
-      `${requestedDate}T${EXB_END_TIME_IN_UTC}:00Z`
+      `${requestedDate}T${endTimeUTC}:00Z`
     )
-      .tz(EXB_TIME_ZONE)
+      .tz(requestedTimeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotEndDateTimeInUTC = moment
       .tz(slotEndDateTimeInRequestedTimeZone, "UTC")
@@ -56,20 +57,20 @@ exports.listSlots = async (req, res) => {
           {
             from: moment(slotStartDateTimeInUTC).subtract(1, "days"),
             to: moment(slotEndDateTimeInUTC).subtract(1, "days"),
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             slots: [],
           },
           {
             from: slotStartDateTimeInUTC,
             to: slotEndDateTimeInUTC,
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             slots: [],
           },
           //next day
           {
             from: moment(slotStartDateTimeInUTC).add(1, "days"),
             to: moment(slotEndDateTimeInUTC).add(1, "days"),
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             slots: [],
           },
         ],
@@ -89,20 +90,20 @@ exports.listSlots = async (req, res) => {
           {
             from: moment(slotStartDateTimeInUTC).subtract(1, "days"),
             to: moment(slotEndDateTimeInUTC).subtract(1, "days"),
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             slots: [],
           },
           {
             from: slotStartDateTimeInUTC,
             to: slotEndDateTimeInUTC,
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             slots: [],
           },
           //next day
           {
             from: moment(slotStartDateTimeInUTC).add(1, "days"),
             to: moment(slotEndDateTimeInUTC).add(1, "days"),
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             slots: [],
           },
         ],
@@ -169,7 +170,7 @@ exports.listSlots = async (req, res) => {
       "minutes"
     );
 
-    const totalSlots = exbDurationInMinutes / EXB_DURATION_IN_MINUTES_PER_SLOT;
+    const totalSlots = exbDurationInMinutes / duration;
 
     const slotTimeListInLocalZone = [];
     let currentDateTimeSlot = moment(matchedDateInfo[0].from);
@@ -177,7 +178,7 @@ exports.listSlots = async (req, res) => {
       const currentTime = moment(currentDateTimeSlot).format("HH:mm");
       slotTimeListInLocalZone.push(currentTime);
       currentDateTimeSlot = moment(currentDateTimeSlot).add(
-        EXB_DURATION_IN_MINUTES_PER_SLOT,
+        duration,
         "minutes"
       );
       if (currentTime == "16:30") break;
@@ -217,7 +218,7 @@ exports.listSlots = async (req, res) => {
           slotStartTimeInLocal,
           "HH:mm"
         )
-          .add(+EXB_DURATION_IN_MINUTES_PER_SLOT, "m")
+          .add(+duration, "m")
           .format("HH:mm")}`;
 
         if (moment(slotStartDateInLocal).isSame(requestedDate, "day"))
@@ -227,7 +228,7 @@ exports.listSlots = async (req, res) => {
             status: slot?.status,
             visitorId: slot?.visitorId,
             slotDate: exbStartDateTimeInLocalZone,
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
             time: slot?.time,
             slotId: slot?._id,
           });
@@ -262,7 +263,7 @@ exports.listSlots = async (req, res) => {
             time: slotStartDateTimeInUTC,
 
             slotDate: exbStartDateTimeInLocalZone,
-            durationInMinutes: +EXB_DURATION_IN_MINUTES_PER_SLOT,
+            durationInMinutes: +duration,
           });
       }
     }
@@ -296,22 +297,22 @@ exports.bookSlot = async (req, res) => {
       bookedTimeZone: timeZone,
       time,
     };
-
+    console.log(time, "YYYY-MM-DD &&&&&&&&&&&&&&")
     slotDate = moment(time).format("YYYY-MM-DD");
-
+    const slotStartTime = moment(time).format("HH:mm");
     const slotStartDateTimeInRequestedTimeZone = momentTimeZone(
-      `${slotDate}T${EXB_START_TIME_IN_UTC}:00Z`
+      `${slotDate}T${slotStartTime}:00Z`
     )
-      .tz(EXB_TIME_ZONE)
+      .tz(timeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotStartDateTimeInUTC = moment
       .tz(slotStartDateTimeInRequestedTimeZone, "UTC")
       .format("YYYY-MM-DDTHH:mm:ssZ");
-
+    const slotEndTime = moment(time).add(duration, 'minutes').format("HH:mm");
     const slotEndDateTimeInRequestedTimeZone = momentTimeZone(
-      `${slotDate}T${EXB_END_TIME_IN_UTC}:00Z`
+      `${slotDate}T${slotEndTime}:00Z`
     )
-      .tz(EXB_TIME_ZONE)
+      .tz(timeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotEndDateTimeInUTC = moment
       .tz(slotEndDateTimeInRequestedTimeZone, "UTC")
@@ -439,9 +440,53 @@ exports.listBookedSlots = async (req, res) => {
   }
 };
 
-exports.getExhibitionDate = (req, res) => {
-  const { timeZone } = req.query;
+// exports.getExhibitionDate = (req, res) => {
+//   const { timeZone } = req.query;
 
+//   // Fetch settings from the database
+//   Setting.findOne({ active: true, deleted: false })
+//     .then(setting => {
+//       if (!setting) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "Settings not found"
+//         });
+//       }
+
+//       const { startDateTime, endDateTime } = setting;
+
+//       // Convert startDateTime and endDateTime to requested timeZone
+//       const slotStartDateTimeInRequestedTimeZone = momentTimeZone(startDateTime)
+//         .tz(timeZone);
+
+//       const slotEndDateTimeInRequestedTimeZone = momentTimeZone(endDateTime)
+//         .tz(timeZone);
+
+//       // Format date and time separately
+//       const startDate = slotStartDateTimeInRequestedTimeZone.format("YYYY-MM-DD");
+//       const endDate = slotEndDateTimeInRequestedTimeZone.format("YYYY-MM-DD");
+//       const startTime = slotStartDateTimeInRequestedTimeZone.format("HH:mm");
+//       const endTime = slotEndDateTimeInRequestedTimeZone.format("HH:mm");
+
+//       return res.status(200).json({
+//         success: true,
+//         data: {
+//           startDate,
+//           endDate,
+//           startTime,
+//           endTime
+//         },
+//       });
+//     })
+//     .catch(err => {
+//       return res.status(500).json({
+//         success: false,
+//         message: "Internal server error"
+//       });
+//     });
+// };
+
+exports.getExhibitionDate = (req, res) => {
   // Fetch settings from the database
   Setting.findOne({ active: true, deleted: false })
     .then(setting => {
@@ -452,22 +497,26 @@ exports.getExhibitionDate = (req, res) => {
         });
       }
 
-      const { startDateTime, endDateTime } = setting;
+      const { startDateTime, endDateTime, duration } = setting;
 
-      // Convert startDateTime and endDateTime to requested timeZone
-      const slotStartDateTimeInRequestedTimeZone = momentTimeZone(startDateTime)
-        .tz(timeZone)
-        .format("YYYY-MM-DD");
+      // Convert startDateTime and endDateTime to UTC
+      const slotStartDateTimeInUTC = momentTimeZone(startDateTime).utc();
+      const slotEndDateTimeInUTC = momentTimeZone(endDateTime).utc();
 
-      const slotEndDateTimeInRequestedTimeZone = momentTimeZone(endDateTime)
-        .tz(timeZone)
-        .format("YYYY-MM-DD");
+      // Format date and time separately in UTC
+      const startDate = slotStartDateTimeInUTC.format("YYYY-MM-DD");
+      const endDate = slotEndDateTimeInUTC.format("YYYY-MM-DD");
+      const startTime = slotStartDateTimeInUTC.format("HH:mm");
+      const endTime = slotEndDateTimeInUTC.format("HH:mm");
 
       return res.status(200).json({
         success: true,
         data: {
-          startDate: slotStartDateTimeInRequestedTimeZone,
-          endDate: slotEndDateTimeInRequestedTimeZone,
+          startDate,
+          endDate,
+          startTime,
+          endTime,
+          duration
         },
       });
     })
@@ -478,7 +527,6 @@ exports.getExhibitionDate = (req, res) => {
       });
     });
 };
-
 
 exports.getVisitorsList = async (req, res) => {
   try {
