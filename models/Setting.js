@@ -9,7 +9,6 @@ var settingSchema = new mongoose.Schema(
         endDateTime: { type: String, required: true },
         timezone: { type: String, required: true },
         duration: { type: String, required: true },
-        isPayment: { type: Boolean, default: false },
         blockVisitorLogin: { type: Boolean, default: false },
         blockExhibitorLogin: { type: Boolean, default: false },
         blockMessage: { type: Object },

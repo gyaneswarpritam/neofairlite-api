@@ -3,24 +3,14 @@ const express = require('express');
 const router = express.Router();
 const exhibitorController = require('../controllers/exhibitorController');
 const stallController = require('../controllers/stallController');
-const hallController = require('../controllers/hallController');
 const passport = require('passport');
 const { jwtSecret } = require('../config/config');
-const directoryController = require('../controllers/directoryController');
-const visualController = require('../controllers/visualController');
-const mediaController = require('../controllers/mediaController');
-const faqController = require('../controllers/faqController');
-const webinarController = require('../controllers/webinarController');
-const liveController = require('../controllers/liveController');
-const activityController = require('../controllers/activityController');
 const visitorController = require('../controllers/visitorController');
 const VisitedStallController = require('../controllers/VisitedStallController');
 const briefCaseController = require('../controllers/briefCaseController');
 const slotsController = require('../controllers/slotsController');
 const instantMeetingController = require('../controllers/instantMeetingController');
 const notificationController = require('../controllers/notificationController');
-const auditoriumController = require('../controllers/auditoriumController');
-const flashMessageController = require('../controllers/flashMessageController');
 const likeController = require('../controllers/likeController');
 const reviewController = require('../controllers/reviewController');
 const productsListController = require('../controllers/productsListController');
@@ -60,22 +50,6 @@ router.get('/stall/:id', passport.authenticate('jwt-exhibitor', { session: false
 router.get('/stall-by-exhibitor/:exhibitor', passport.authenticate('jwt-exhibitor', { session: false }), stallController.getStallByExhibitor);
 router.put('/stall/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallController.updateStall);
 router.delete('/stall/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallController.deleteStall);
-
-/*Hall Route*/
-router.get('/hall', passport.authenticate('jwt-exhibitor', { session: false }), hallController.getAllHall);
-router.get('/hall/:id', passport.authenticate('jwt-exhibitor', { session: false }), hallController.getHallById);
-
-/*Resource Center Route*/
-router.get('/directory', passport.authenticate('jwt-exhibitor', { session: false }), directoryController.getAllDirectory);
-router.get('/visual', passport.authenticate('jwt-exhibitor', { session: false }), visualController.getAllVisual);
-router.get('/media', passport.authenticate('jwt-exhibitor', { session: false }), mediaController.getAllMedia);
-router.get('/faq', passport.authenticate('jwt-exhibitor', { session: false }), faqController.getAllFaq);
-
-
-router.get('/webinar', passport.authenticate('jwt-exhibitor', { session: false }), webinarController.getAllWebinar);
-router.get('/live', passport.authenticate('jwt-exhibitor', { session: false }), liveController.getAllLive);
-router.get('/activity', passport.authenticate('jwt-exhibitor', { session: false }), activityController.getAllActivities);
-
 router.get('/loggedin-user', passport.authenticate('jwt-exhibitor', { session: false }), visitorController.getAllLoggedInVisitor);
 router.get('/visited-stall/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), VisitedStallController.getAllVisitedStallForExhibitor);
 router.get('/live-stall-visitors/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), VisitedStallController.getLiveVisitedStallForExhibitor);
@@ -89,9 +63,6 @@ router.put('/instant-meeting/:id', passport.authenticate('jwt-exhibitor', { sess
 
 router.post('/notification', passport.authenticate('jwt-exhibitor', { session: false }), notificationController.createVisitorNotification);
 router.get('/notification/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), notificationController.getExhibitorNotification);
-
-router.get('/auditorium', passport.authenticate('jwt-exhibitor', { session: false }), auditoriumController.getAllAuditorium);
-router.get('/flashMessage', passport.authenticate('jwt-exhibitor', { session: false }), flashMessageController.getAllFlashMessage);
 router.get('/likes/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), likeController.getProductsAndLikeCounts);
 router.get('/reviews/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getAverageReviewsByExhibitorId);
 router.get('/visited-product-count/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitedProductExhibitorId);

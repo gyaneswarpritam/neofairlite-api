@@ -29,7 +29,8 @@ exports.register = async (req, res) => {
             req.body.password = await bcrypt.hash(req.body.password, 10);
             const visitor = new Visitor(req.body);
             const visitorData = await visitor.save();
-            await emailController.sendRegisteredMail(visitorData._id);
+            const baseUrl = req.protocol + '://' + req.get('host');
+            await emailController.sendRegisteredMail(visitorData._id, baseUrl);
 
             const successObj = successResponse('Visitor registered successfully', visitorData)
             res.status(successObj.status).send(successObj);
@@ -78,7 +79,6 @@ exports.login = async (req, res) => {
         if (validation.success) {
             const { email, password } = req.body;
             const visitor = await Visitor.findOne({ email, active: true });
-            console.log(email, "############", visitor)
 
             if (!visitor) {
                 return res.status(404).json({ status: 0, message: 'Visitor not found' });
@@ -144,6 +144,37 @@ exports.getAllVisitor = async (req, res) => {
             companyName: visitor.companyName,
         }));
         const successObj = successResponse('Visitor List', modifiedVisitors);
+        res.status(successObj.status).send(successObj);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getAllExhibitorHavingStall = async (req, res) => {
+    try {
+        // Find all stalls and get the unique list of exhibitor IDs
+        const stalls = await Stall.find({}).select('exhibitor').lean();
+        console.log(stalls, "^^^^^^^^^^^^^^^^^^^^^")
+        if (!stalls || stalls.length === 0) {
+            return res.status(404).json({ message: 'No stalls found' });
+        }
+
+        const exhibitorIds = [...new Set(stalls.map(stall => stall.exhibitor))]; // Get unique exhibitor IDs
+
+        // Find all exhibitors with the extracted IDs
+        const exhibitors = await Exhibitor.find({ _id: { $in: exhibitorIds } });
+        if (!exhibitors || exhibitors.length === 0) {
+            return res.status(404).json({ message: 'No exhibitors found' });
+        }
+
+        const modifiedExhibitors = exhibitors.map(exhibitor => ({
+            _id: exhibitor._id,
+            name: exhibitor.name,
+            email: exhibitor.email,
+            companyName: exhibitor.companyName
+        }));
+
+        const successObj = successResponse('Exhibitor List', modifiedExhibitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
         res.status(500).json({ message: error.message });

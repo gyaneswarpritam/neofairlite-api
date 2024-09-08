@@ -3,27 +3,16 @@ const router = express.Router();
 const passport = require('passport');
 const { jwtSecret } = require('../config/config');
 
-const hallController = require('../controllers/hallController');
 const visitorController = require('../controllers/visitorController');
 const exhibitorController = require('../controllers/exhibitorController');
 const settingController = require('../controllers/settingController');
-const locationChargesController = require('../controllers/locationChargesController');
 const stallController = require('../controllers/stallController');
-const directoryController = require('../controllers/directoryController');
-const visualController = require('../controllers/visualController');
-const mediaController = require('../controllers/mediaController');
-const faqController = require('../controllers/faqController');
-const liveController = require('../controllers/liveController');
-const activityController = require('../controllers/activityController');
-const webinarController = require('../controllers/webinarController');
 const VisitedStallController = require('../controllers/VisitedStallController');
 const briefCaseController = require('../controllers/briefCaseController');
 const trackController = require('../controllers/trackController');
 const slotsController = require('../controllers/slotsController');
 const instantMeetingController = require('../controllers/instantMeetingController');
 const notificationController = require('../controllers/notificationController');
-const auditoriumController = require('../controllers/auditoriumController');
-const flashMessageController = require('../controllers/flashMessageController');
 const likeController = require('../controllers/likeController');
 const reviewController = require('../controllers/reviewController');
 
@@ -56,12 +45,9 @@ router.post('/requestotp', visitorController.requestOtp);
 router.post('/verify-email', visitorController.verifyEmail);
 router.post('/forgot-password', visitorController.forgotPassword);
 
-/*Hall Route*/
-router.get('/hall', passport.authenticate('jwt-visitor', { session: false }), hallController.getAllHall);
-router.get('/hall/:id', passport.authenticate('jwt-visitor', { session: false }), hallController.getHallById);
-
 /*Exhibitor List Route*/
 router.get('/exhibitorList', passport.authenticate('jwt-visitor', { session: false }), exhibitorController.getAllExhibitor);
+router.get('/exhibitorListWithStall', passport.authenticate('jwt-visitor', { session: false }), visitorController.getAllExhibitorHavingStall);
 router.get('/exhibitorChatList/:id', passport.authenticate('jwt-visitor', { session: false }), exhibitorController.getChatExhibitor);
 router.get('/exhibitorById/:id', passport.authenticate('jwt-visitor', { session: false }), exhibitorController.getExhibitorById);
 
@@ -77,19 +63,6 @@ router.get('/settings', settingController.getAllSettings);
 router.get('/all-stall', passport.authenticate('jwt-visitor', { session: false }), stallController.getAllStall);
 router.get('/exhibitor-info', stallController.getAllStall);
 router.get('/stall/:id/:visitorId', passport.authenticate('jwt-visitor', { session: false }), stallController.getByVisitorByStallById);
-
-/*location Charges Route*/
-router.get('/location-charges', locationChargesController.getAllLocationCharges);
-/*Resource Center Route*/
-router.get('/directory', passport.authenticate('jwt-visitor', { session: false }), directoryController.getAllDirectory);
-router.get('/visual', passport.authenticate('jwt-visitor', { session: false }), visualController.getAllVisual);
-router.get('/media', passport.authenticate('jwt-visitor', { session: false }), mediaController.getAllMedia);
-router.get('/faq', passport.authenticate('jwt-visitor', { session: false }), faqController.getAllFaq);
-
-router.get('/webinar', passport.authenticate('jwt-visitor', { session: false }), webinarController.getAllWebinar);
-router.get('/live', passport.authenticate('jwt-visitor', { session: false }), liveController.getAllLive);
-router.get('/activity', passport.authenticate('jwt-visitor', { session: false }), activityController.getAllActivities);
-
 
 router.get('/loggedin-user', passport.authenticate('jwt-visitor', { session: false }), visitorController.getAllLoggedInVisitor);
 router.get('/visited-stall/:visitorId', passport.authenticate('jwt-visitor', { session: false }), VisitedStallController.getAllVisitedStallForVisitor);
@@ -112,9 +85,6 @@ router.put('/instant-meeting/:id', passport.authenticate('jwt-visitor', { sessio
 
 router.post('/notification', passport.authenticate('jwt-visitor', { session: false }), notificationController.createExhibitorNotification);
 router.get('/notification/:visitorId', passport.authenticate('jwt-visitor', { session: false }), notificationController.getVisitorNotification);
-
-router.get('/auditorium', passport.authenticate('jwt-visitor', { session: false }), auditoriumController.getAllAuditorium);
-router.get('/flashMessage', passport.authenticate('jwt-visitor', { session: false }), flashMessageController.getAllFlashMessage);
 
 // Route to add a like
 router.post('/add-like', passport.authenticate('jwt-visitor', { session: false }), likeController.addLike);
