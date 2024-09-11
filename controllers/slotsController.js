@@ -281,8 +281,10 @@ exports.listSlots = async (req, res) => {
 
 exports.bookSlot = async (req, res) => {
   try {
-    let { slotDate, eId, visitorId, time, duration, timeZone, status } =
+    let { slotDate, eId, visitorId, time, duration, timeZone, status, startDate, endDate } =
       req.body;
+    const EXB_START_TIME_IN_UTCq = moment(startDate).utc().format("HH:mm"); // UTC time in 24-hour format
+    const EXB_END_TIME_IN_UTCq = moment(endDate).utc().format("HH:mm");
     const slotId = req.body?.slotId;
 
     const visitorInfo = await Visitor.findOne({ _id: visitorId });
@@ -301,18 +303,18 @@ exports.bookSlot = async (req, res) => {
     slotDate = moment(time).format("YYYY-MM-DD");
 
     const slotStartDateTimeInRequestedTimeZone = momentTimeZone(
-      `${slotDate}T${EXB_START_TIME_IN_UTC}:00Z`
+      `${slotDate}T${EXB_START_TIME_IN_UTCq}:00Z`
     )
-      .tz(EXB_TIME_ZONE)
+      .tz(timeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotStartDateTimeInUTC = moment
       .tz(slotStartDateTimeInRequestedTimeZone, "UTC")
       .format("YYYY-MM-DDTHH:mm:ssZ");
 
     const slotEndDateTimeInRequestedTimeZone = momentTimeZone(
-      `${slotDate}T${EXB_END_TIME_IN_UTC}:00Z`
+      `${slotDate}T${EXB_END_TIME_IN_UTCq}:00Z`
     )
-      .tz(EXB_TIME_ZONE)
+      .tz(timeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotEndDateTimeInUTC = moment
       .tz(slotEndDateTimeInRequestedTimeZone, "UTC")
