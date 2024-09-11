@@ -1,12 +1,12 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var settingSchema = new mongoose.Schema(
+const settingSchema = new mongoose.Schema(
     {
         location: { type: String, required: true },
         country: { type: String, required: true },
         fairName: { type: String, required: true },
-        startDateTime: { type: Date, required: true },
-        endDateTime: { type: Date, required: true },
+        startDateTime: { type: Date, required: true }, // Date fields automatically store in UTC
+        endDateTime: { type: Date, required: true },   // Date fields automatically store in UTC
         timezone: { type: String, required: true },
         duration: { type: String, required: true },
         blockVisitorLogin: { type: Boolean, default: false },
@@ -17,10 +17,11 @@ var settingSchema = new mongoose.Schema(
         deleted: { type: String, default: false },
     },
     {
-        timestamps: true,
+        timestamps: true, // Automatically adds createdAt and updatedAt fields in UTC
     }
 );
 
+// Add indexes for startDateTime and endDateTime
 settingSchema.index({ startDateTime: 1 });
 settingSchema.index({ endDateTime: 1 });
 
