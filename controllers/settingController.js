@@ -3,6 +3,7 @@ const Setting = require('../models/Setting');
 const { successResponse } = require('../utils/sendResponse');
 const settingSchema = require('../validators/settingValidator');
 const schemaValidator = require('../validators/schemaValidator');
+const slots = require('../models/slots');
 
 exports.createSetting = async (req, res) => {
     try {
