@@ -1,6 +1,6 @@
 const moment = require("moment");
 const momentTimeZone = require("moment-timezone");
-// const { EXB_DURATION_IN_MINUTES_PER_SLOT, EXB_END_TIME_IN_UTC, EXB_FROM_IN_UTC, EXB_START_TIME_IN_UTC, EXB_TIME_ZONE, EXB_TO_IN_UTC } = require("../constants.js");
+const { EXB_DURATION_IN_MINUTES_PER_SLOT, EXB_END_TIME_IN_UTC, EXB_FROM_IN_UTC, EXB_START_TIME_IN_UTC, EXB_TIME_ZONE, EXB_TO_IN_UTC } = require("../constants.js");
 const Slots = require("../models/slots.js");
 const Visitor = require("../models/Visitor.js");
 const Exhibitor = require("../models/Exhibitor.js");
@@ -19,11 +19,11 @@ exports.listExhibitors = async (req, res) => {
 
 exports.listSlots = async (req, res) => {
   try {
-    const { id, timeZone: requestedTimeZone, date: requestedDate,
-      startTime: startTimeUTC, endTime: endTimeUTC, duration } = req.query;
-
+    const { id, timeZone: requestedTimeZone, date: requestedDate, duration, startDate, endDate } = req.query;
+    const EXB_START_TIME_IN_UTCq = moment(startDate).utc().format("HH:mm"); // UTC time in 24-hour format
+    const EXB_END_TIME_IN_UTCq = moment(endDate).utc().format("HH:mm");
     const slotStartDateTimeInRequestedTimeZone = momentTimeZone(
-      `${requestedDate}T${startTimeUTC}:00Z`
+      `${requestedDate}T${EXB_START_TIME_IN_UTCq}:00Z`
     )
       .tz(requestedTimeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
@@ -32,7 +32,7 @@ exports.listSlots = async (req, res) => {
       .format("YYYY-MM-DDTHH:mm:ssZ");
 
     const slotEndDateTimeInRequestedTimeZone = momentTimeZone(
-      `${requestedDate}T${endTimeUTC}:00Z`
+      `${requestedDate}T${EXB_END_TIME_IN_UTCq}:00Z`
     )
       .tz(requestedTimeZone)
       .format("YYYY-MM-DDTHH:mm:ssZ");
@@ -181,7 +181,7 @@ exports.listSlots = async (req, res) => {
         duration,
         "minutes"
       );
-      if (currentTime == "16:30") break;
+      // if (currentTime == "16:30") break;
     }
     const allSlotTimings = slotTimeListInLocalZone.map((item) => {
       const time = moment
@@ -297,22 +297,22 @@ exports.bookSlot = async (req, res) => {
       bookedTimeZone: timeZone,
       time,
     };
-    console.log(time, "YYYY-MM-DD &&&&&&&&&&&&&&")
+
     slotDate = moment(time).format("YYYY-MM-DD");
-    const slotStartTime = moment(time).format("HH:mm");
+
     const slotStartDateTimeInRequestedTimeZone = momentTimeZone(
-      `${slotDate}T${slotStartTime}:00Z`
+      `${slotDate}T${EXB_START_TIME_IN_UTC}:00Z`
     )
-      .tz(timeZone)
+      .tz(EXB_TIME_ZONE)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotStartDateTimeInUTC = moment
       .tz(slotStartDateTimeInRequestedTimeZone, "UTC")
       .format("YYYY-MM-DDTHH:mm:ssZ");
-    const slotEndTime = moment(time).add(duration, 'minutes').format("HH:mm");
+
     const slotEndDateTimeInRequestedTimeZone = momentTimeZone(
-      `${slotDate}T${slotEndTime}:00Z`
+      `${slotDate}T${EXB_END_TIME_IN_UTC}:00Z`
     )
-      .tz(timeZone)
+      .tz(EXB_TIME_ZONE)
       .format("YYYY-MM-DDTHH:mm:ssZ");
     const slotEndDateTimeInUTC = moment
       .tz(slotEndDateTimeInRequestedTimeZone, "UTC")
@@ -440,53 +440,9 @@ exports.listBookedSlots = async (req, res) => {
   }
 };
 
-// exports.getExhibitionDate = (req, res) => {
-//   const { timeZone } = req.query;
-
-//   // Fetch settings from the database
-//   Setting.findOne({ active: true, deleted: false })
-//     .then(setting => {
-//       if (!setting) {
-//         return res.status(404).json({
-//           success: false,
-//           message: "Settings not found"
-//         });
-//       }
-
-//       const { startDateTime, endDateTime } = setting;
-
-//       // Convert startDateTime and endDateTime to requested timeZone
-//       const slotStartDateTimeInRequestedTimeZone = momentTimeZone(startDateTime)
-//         .tz(timeZone);
-
-//       const slotEndDateTimeInRequestedTimeZone = momentTimeZone(endDateTime)
-//         .tz(timeZone);
-
-//       // Format date and time separately
-//       const startDate = slotStartDateTimeInRequestedTimeZone.format("YYYY-MM-DD");
-//       const endDate = slotEndDateTimeInRequestedTimeZone.format("YYYY-MM-DD");
-//       const startTime = slotStartDateTimeInRequestedTimeZone.format("HH:mm");
-//       const endTime = slotEndDateTimeInRequestedTimeZone.format("HH:mm");
-
-//       return res.status(200).json({
-//         success: true,
-//         data: {
-//           startDate,
-//           endDate,
-//           startTime,
-//           endTime
-//         },
-//       });
-//     })
-//     .catch(err => {
-//       return res.status(500).json({
-//         success: false,
-//         message: "Internal server error"
-//       });
-//     });
-// };
-
 exports.getExhibitionDate = (req, res) => {
+  const { timeZone } = req.query;
+
   // Fetch settings from the database
   Setting.findOne({ active: true, deleted: false })
     .then(setting => {
@@ -499,23 +455,20 @@ exports.getExhibitionDate = (req, res) => {
 
       const { startDateTime, endDateTime, duration } = setting;
 
-      // Convert startDateTime and endDateTime to UTC
-      const slotStartDateTimeInUTC = momentTimeZone(startDateTime).utc();
-      const slotEndDateTimeInUTC = momentTimeZone(endDateTime).utc();
+      // Convert startDateTime and endDateTime to requested timeZone
+      // const slotStartDateTimeInRequestedTimeZone = momentTimeZone(startDateTime)
+      //   .tz(timeZone)
+      //   .format("YYYY-MM-DD");
 
-      // Format date and time separately in UTC
-      const startDate = slotStartDateTimeInUTC.format("YYYY-MM-DD");
-      const endDate = slotEndDateTimeInUTC.format("YYYY-MM-DD");
-      const startTime = slotStartDateTimeInUTC.format("HH:mm");
-      const endTime = slotEndDateTimeInUTC.format("HH:mm");
+      // const slotEndDateTimeInRequestedTimeZone = momentTimeZone(endDateTime)
+      //   .tz(timeZone)
+      //   .format("YYYY-MM-DD");
 
       return res.status(200).json({
         success: true,
         data: {
-          startDate,
-          endDate,
-          startTime,
-          endTime,
+          startDate: startDateTime,
+          endDate: endDateTime,
           duration
         },
       });
@@ -527,6 +480,7 @@ exports.getExhibitionDate = (req, res) => {
       });
     });
 };
+
 
 exports.getVisitorsList = async (req, res) => {
   try {
