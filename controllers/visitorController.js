@@ -373,25 +373,27 @@ exports.requestOtp = async (req, res) => {
         }
 
         // Generate a random OTP (6 digits)
-        const otp = crypto.randomInt(100000, 999999).toString();
+        const otp = crypto.randomInt(1000, 9999).toString();
 
         // Save OTP to the database
         const data = await Otp.findOneAndUpdate(
             { phoneNumber },
             { otp, createdAt: new Date() },
-            { upsert: true }
+            { upsert: true, new: true }
         );
+        if (data) {
+            // Send OTP via SMS
+            const result = await sendOtp(phoneNumber, otp);
 
-        // Send OTP via SMS
-        const result = await sendOtp(phoneNumber, otp);
-        console.log(result, "%%%%%%%%%%%%%!!")
-
-        if (result.success) {
-            const successObj = successResponse('OTP sent successfully', data)
-            res.status(successObj.status).send(successObj);
+            if (result.data.status == 'success') {
+                return res.status(200).json({ status: 1, message: 'OTP sent successfully', data: { otp: otp } });
+            } else {
+                return res.status(500).json({ status: 0, message: 'Something wrong' });
+            }
         } else {
-            return res.status(500).json({ status: 0, message: result.message });
+            return res.status(500).json({ status: 0, message: 'Something wrong' });
         }
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ status: 0, message: 'Internal server error' });
@@ -415,6 +417,16 @@ exports.verifyOtp = async (req, res) => {
         }
 
         if (otpRecord.otp === otp) {
+            const visitor = await Visitor.findOne({
+                phone: phoneNumber
+            });
+
+            if (!visitor) {
+                return res.status(400).send("Invalid or expired token");
+            }
+
+            visitor.isVerified = true;
+            await visitor.save();
             return res.json({ status: 1, message: 'OTP verified successfully' });
         } else {
             return res.status(400).json({ status: 0, message: 'Invalid OTP' });
