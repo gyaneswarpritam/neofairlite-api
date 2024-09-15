@@ -19,24 +19,60 @@ const emailController = require('./emailController');
 // Register a new visitor
 exports.register = async (req, res) => {
     try {
+        const { verification, email, phone, password } = req.body;
+
+        // Check if verification method is email, and validate email and password presence
+        if (verification === 'email') {
+            if (!email || !password) {
+                return res.status(400).json({ status: 0, message: 'Email and password are required for email verification' });
+            }
+        }
+
+        // Check if verification method is SMS, and validate phone presence
+        if (verification === 'sms') {
+            if (!phone) {
+                return res.status(400).json({ status: 0, message: 'Phone number is required for SMS verification' });
+            }
+        }
+
+        // Validate the incoming request body based on the schema
         const validation = schemaValidator(visitorSchema, req.body);
-        if (validation.success) {
-            const { email } = req.body;
+        if (!validation.success) {
+            return res.status(401).json({ message: validation.errors });
+        }
+
+        // Proceed with the logic after successful validation
+        // Check if a visitor with the same email already exists
+        if (email) {
             const existingVisitor = await Visitor.findOne({ email });
             if (existingVisitor) {
                 return res.status(400).json({ status: 0, message: 'Email already exists' });
             }
-            req.body.password = await bcrypt.hash(req.body.password, 10);
-            const visitor = new Visitor(req.body);
-            const visitorData = await visitor.save();
+        } else if (phone) {
+            const existingVisitor = await Visitor.findOne({ phone });
+            if (existingVisitor) {
+                return res.status(400).json({ status: 0, message: 'Phone already exists' });
+            }
+        }
+
+        // Hash the password if provided (only relevant for email verification)
+        if (password) {
+            req.body.password = await bcrypt.hash(password, 10);
+        }
+
+        // Create a new visitor entry
+        const visitor = new Visitor(req.body);
+        const visitorData = await visitor.save();
+
+        // Send registration email if verification method is 'email'
+        if (verification === 'email') {
             const baseUrl = req.protocol + '://' + req.get('host');
             await emailController.sendRegisteredMail(visitorData._id, baseUrl);
-
-            const successObj = successResponse('Visitor registered successfully', visitorData)
-            res.status(successObj.status).send(successObj);
-        } else {
-            res.status(401).json({ message: validation.errors });
         }
+
+        // Respond with a success message
+        const successObj = successResponse('Visitor registered successfully', visitorData);
+        res.status(successObj.status).send(successObj);
     } catch (error) {
         console.error(error);
         res.status(500).json({ status: 0, message: 'Internal server error' });
@@ -114,6 +150,44 @@ exports.login = async (req, res) => {
         res.status(500).json({ status: 0, message: 'Internal server error' });
     }
 };
+
+exports.loginByPhone = async (req, res) => {
+    try {
+        const { phone } = req.body;
+        const visitor = await Visitor.findOne({ phone, active: true });
+
+        if (!visitor) {
+            return res.status(404).json({ status: 0, message: 'Visitor not found' });
+        }
+
+        const isMatch = phone == visitor.phone
+        if (isMatch) {
+            const currentDate = new Date();
+            const utcFormat = currentDate.toISOString();
+            await Visitor.findByIdAndUpdate(visitor.id, {
+                loggedIn: true,
+                loggedInIP: req.body.loggedInIP,
+                loggedInTime: utcFormat
+            }, { new: true });
+
+            const payload = { id: visitor.id, phone: visitor.phone };
+            jwt.sign(payload, jwtSecret, { expiresIn: '3650d' }, (err, token) => {
+                res.json({
+                    success: true,
+                    token: 'Bearer ' + token,
+                    id: visitor.id,
+                    name: visitor.name
+                });
+            });
+        } else {
+            return res.status(400).json({ status: 0, message: 'Username/Phone is incorrect' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 0, message: 'Internal server error' });
+    }
+};
+
 
 // Logout a loggedOut
 exports.loggedOut = async (req, res) => {
@@ -252,7 +326,6 @@ exports.forgotPassword = async (req, res) => {
 
         // Send the new password to the user's email
         const forgot = await emailController.sendForgotPassword(visitor, randomPassword);
-        console.log(forgot, '&&&&&&&&&&')
         // Respond with success message
         res.status(200).json({ status: 1, message: 'Password reset successfully. Please check your email.' });
     } catch (error) {
@@ -367,7 +440,6 @@ exports.requestOtp = async (req, res) => {
     try {
         debugger;
         const { phoneNumber } = req.body;
-        console.log(phoneNumber, "%%%%%%%%%%%%%")
         if (!phoneNumber) {
             return res.status(400).json({ status: 0, message: 'Phone number is required' });
         }
@@ -386,7 +458,7 @@ exports.requestOtp = async (req, res) => {
             const result = await sendOtp(phoneNumber, otp);
 
             if (result.data.status == 'success') {
-                return res.status(200).json({ status: 1, message: 'OTP sent successfully', data: { otp: otp } });
+                return res.status(200).json({ status: 1, message: 'OTP sent successfully' });
             } else {
                 return res.status(500).json({ status: 0, message: 'Something wrong' });
             }

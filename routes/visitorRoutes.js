@@ -27,10 +27,10 @@ const jwtOptions = {
 
 passport.use('jwt-visitor', new JwtStrategy(jwtOptions, (jwtPayload, done) => {
     // Extract the fields from the payload
-    const { id, email } = jwtPayload;
+    const { id, email, phone } = jwtPayload;
 
-    // Here you can add additional checks if needed
-    if (id && email) {
+    // Check if either email or phone exists
+    if (id && (email || phone)) {
         return done(null, jwtPayload); // Authentication successful
     } else {
         return done(null, false); // Authentication failed
@@ -39,6 +39,7 @@ passport.use('jwt-visitor', new JwtStrategy(jwtOptions, (jwtPayload, done) => {
 
 router.post('/register', visitorController.register);
 router.post('/login', visitorController.login);
+router.post('/login-by-phone', visitorController.loginByPhone);
 router.post('/logout', visitorController.loggedOut);
 router.post('/verifyotp', visitorController.verifyOtp);
 router.post('/requestotp', visitorController.requestOtp);
