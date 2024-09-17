@@ -4,7 +4,7 @@ const axios = require('axios');
 const sendOtp = async (phone, otp) => {
     // const message = `Dear User, Thank you for registering with us. Your OTP is ${otp} CBP TECHNOLOGIES`;
     // const messageOTP = `Your OTP is ${otp} CBP TECHNOLOGIES`;
-    const API_URL = `http://sms.creativepoint.in/api/push.json?apikey=66d1ac73e4baf&route=transsms&sender=CBPTEC&mobileno=${phone}&text=Dear%20Exhibitor,%20a%20visitor%20has%20started%20a%20one-on-one%20VIDEO%20CHAT%20with%20you.%0AYour%20OTP%20%20${otp}%C2%A0CBP%20TECHNOLOGIES`;
+    const API_URL = `http://sms.creativepoint.in/api/push.json?apikey=66d1ac73e4baf&route=transsms&sender=CBPTEC&mobileno=${phone}&text=Dear%20Customer,%20Thank%20you%20for%20registering%20with%20us.%20Your%20One-Time%20Password%20(OTP)%20is%20${otp}.%20Regards,%20CBP%20TECHNOLOGIES`;
     // const API_URL = `http://sms.creativepoint.in/api/push.json?apikey=66d1ac73e4baf&route=transsms&sender=CBPTEC&mobileno=${phone}&text=${message}`
     try {
         return await axios.get(API_URL);
