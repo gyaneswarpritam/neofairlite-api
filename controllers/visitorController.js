@@ -7,7 +7,7 @@ const authService = require('../services/authService');
 const { jwtSecret, base_url } = require('../config/config');
 const schemaValidator = require('../validators/schemaValidator');
 const { visitorSchema, visitorLoginSchema } = require('../validators/visitorValidator');
-const { successResponse, notFoundResponse } = require('../utils/sendResponse');
+const { successResponse } = require('../utils/sendResponse');
 const Exhibitor = require('../models/Exhibitor');
 const Stall = require('../models/Stall');
 const stripe = require('stripe')(process.env.STRIPE_SK_KEY);
@@ -95,6 +95,7 @@ exports.verifyEmail = async (req, res) => {
 
         // Update the visitor to mark email as verified
         visitor.isVerified = true;
+        visitor.emailVerified = true;
         visitor.verificationToken = undefined; // Clear the token
         visitor.verificationTokenExpires = undefined;
         await visitor.save();
@@ -114,10 +115,10 @@ exports.login = async (req, res) => {
 
         if (validation.success) {
             const { email, password } = req.body;
-            const visitor = await Visitor.findOne({ email, active: true });
+            const visitor = await Visitor.findOne({ email, active: true, isVerified: true, emailVerified: true });
 
             if (!visitor) {
-                return res.status(404).json({ status: 0, message: 'Visitor not found' });
+                return res.status(404).json({ status: 0, message: 'Your email is not yet verified. Please verify your email to proceed.' });
             }
 
             const isMatch = await bcrypt.compare(password, visitor.password);
@@ -154,10 +155,10 @@ exports.login = async (req, res) => {
 exports.loginByPhone = async (req, res) => {
     try {
         const { phone } = req.body;
-        const visitor = await Visitor.findOne({ phone, active: true });
+        const visitor = await Visitor.findOne({ phone, active: true, isVerified: true, phoneVerified: true });
 
         if (!visitor) {
-            return res.status(404).json({ status: 0, message: 'Visitor not found' });
+            return res.status(404).json({ status: 0, message: 'Your Phone Number is not yet verified. Please verify your phone to proceed.' });
         }
 
         const isMatch = phone == visitor.phone
@@ -201,6 +202,99 @@ exports.loggedOut = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+exports.getVisitorToVerify = async (req, res) => {
+    try {
+        const visitorId = req.params.id;
+        const visitor = await Visitor.findById(visitorId);
+
+        if (!visitor) {
+            return res.status(404).json({ message: 'Visitor not found' });
+        }
+
+        // Checking if either email and password exist or phone exists
+        const hasEmailAndPassword = visitor.email && visitor.password;
+        const hasPhone = visitor.phone;
+
+        const visitorData = {
+            visitor,
+            hasEmailAndPassword,
+            hasPhone,
+            isPhoneVerified: hasPhone && visitor.isVerified,  // Verification check
+            isEmailVerified: hasEmailAndPassword && visitor.isVerified  // Verification check
+        };
+        const successObj = successResponse('Visitor Data', visitorData);
+        res.status(successObj.status).send(successObj);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching visitor data', error });
+    }
+};
+
+exports.verifyVisitorProfile = async (req, res) => {
+    try {
+        const { email, phone, password } = req.body;
+        const visitorId = req.params.id;
+
+        // Fetch the visitor by ID
+        const visitor = await Visitor.findById(visitorId);
+
+        if (!visitor) {
+            return res.status(404).json({ status: 0, message: 'Visitor not found' });
+        }
+
+        // Check if the email exists in the database for another visitor
+        if (email) {
+            const emailExists = await Visitor.findOne({ email, _id: { $ne: visitorId } });
+            if (emailExists) {
+                return res.status(400).json({ status: 0, message: 'Email already exists' });
+            }
+        }
+
+        // Check if the phone number exists in the database for another visitor
+        if (phone) {
+            const phoneExists = await Visitor.findOne({ phone, _id: { $ne: visitorId } });
+            if (phoneExists) {
+                return res.status(400).send('Phone number already exists');
+            }
+        }
+
+        // Update the visitor's email and/or phone
+        if (email) {
+            visitor.email = email;
+
+            // If password is provided, hash it and save
+            if (password) {
+                visitor.password = await bcrypt.hash(password, 10);
+            }
+        }
+
+        if (phone) {
+            visitor.phone = phone;
+        }
+
+        // Save the updated visitor
+        const visitorData = await visitor.save();
+        if (email) {
+            const baseUrl = req.protocol + '://' + req.get('host');
+            await emailController.sendRegisteredMail(visitorData._id, baseUrl);
+        }
+        const hasEmailAndPassword = visitor.email && visitor.password;
+        const hasPhone = visitor.phone;
+
+        const visitorInfo = {
+            visitor,
+            hasEmailAndPassword,
+            hasPhone,
+            isPhoneVerified: hasPhone && visitor.isVerified,  // Phone verification check
+            isEmailVerified: hasEmailAndPassword && visitor.isVerified  // Email verification check
+        };
+
+        return res.status(200).send(successResponse('Visitor Data Updated Successfully', visitorInfo));
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error updating visitor data', error });
     }
 };
 
@@ -435,6 +529,18 @@ exports.getVisitorById = async (req, res) => {
     }
 };
 
+exports.getVisitorData = async (req, res) => {
+    try {
+        const visitor = await Visitor.find(req.body);
+        if (visitor.length === 0) {
+            return res.status(200).json({ status: 0, message: 'Visitor entry not found' });
+        }
+        res.status(200).json({ status: 1, visitor });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Request OTP for verification
 exports.requestOtp = async (req, res) => {
     try {
@@ -498,6 +604,7 @@ exports.verifyOtp = async (req, res) => {
             }
 
             visitor.isVerified = true;
+            visitor.phoneVerified = true;
             await visitor.save();
             return res.json({ status: 1, message: 'OTP verified successfully' });
         } else {

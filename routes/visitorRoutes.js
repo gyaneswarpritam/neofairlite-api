@@ -45,6 +45,7 @@ router.post('/verifyotp', visitorController.verifyOtp);
 router.post('/requestotp', visitorController.requestOtp);
 router.post('/verify-email', visitorController.verifyEmail);
 router.post('/forgot-password', visitorController.forgotPassword);
+router.post('/getVisitorData', visitorController.getVisitorData);
 
 /*Exhibitor List Route*/
 router.get('/exhibitorList', passport.authenticate('jwt-visitor', { session: false }), exhibitorController.getAllExhibitor);
@@ -56,6 +57,8 @@ router.get('/exhibitorById/:id', passport.authenticate('jwt-visitor', { session:
 router.get('/visitorList', passport.authenticate('jwt-visitor', { session: false }), visitorController.getAllVisitor);
 router.get('/visitorChatList/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.getAllChatVisitor);
 router.get('/visitorById/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.getVisitorById);
+router.get('/visitorByIdToVerify/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.getVisitorToVerify);
+router.post('/verifyVisitorProfile/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.verifyVisitorProfile);
 
 /*Settings Route*/
 router.get('/settings', settingController.getAllSettings);

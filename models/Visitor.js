@@ -40,6 +40,8 @@ const visitorSchema = new mongoose.Schema({
     isVerified: { type: Boolean, default: false },
     verificationToken: { type: String },
     verificationTokenExpires: { type: Date },
+    phoneVerified: { type: Boolean, default: false },
+    emailVerified: { type: Boolean, default: false },
     loggedInTime: { type: String, default: '' },
     loggedInIP: { type: String, default: '' },
     deleted: { type: Boolean, default: false },
