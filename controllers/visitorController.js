@@ -297,7 +297,16 @@ exports.verifyVisitorProfile = async (req, res) => {
         return res.status(500).json({ message: 'Error updating visitor data', error });
     }
 };
-
+exports.sendVerifyProfileEmailByLink = async (req, res) => {
+    try {
+        const baseUrl = req.protocol + '://' + req.get('host');
+        await emailController.sendRegisteredMail(req.params.id, baseUrl);
+        return res.status(200).json({ status: 1, message: 'Verification email sent.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error updating visitor data', error });
+    }
+}
 // Get all visitors
 exports.getAllVisitor = async (req, res) => {
     try {

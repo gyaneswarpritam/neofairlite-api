@@ -59,6 +59,7 @@ router.get('/visitorChatList/:id', passport.authenticate('jwt-visitor', { sessio
 router.get('/visitorById/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.getVisitorById);
 router.get('/visitorByIdToVerify/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.getVisitorToVerify);
 router.post('/verifyVisitorProfile/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.verifyVisitorProfile);
+router.get('/sendVerifyProfileEmailByLink/:id', passport.authenticate('jwt-visitor', { session: false }), visitorController.sendVerifyProfileEmailByLink);
 
 /*Settings Route*/
 router.get('/settings', settingController.getAllSettings);
