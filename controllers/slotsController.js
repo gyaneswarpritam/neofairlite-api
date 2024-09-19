@@ -429,6 +429,7 @@ exports.listBookedSlots = async (req, res) => {
         Timezone: item?.slot.bookedTimeZone,
         ExhibitorCompanyName: item?.companyName,
         Status: item?.slot?.status,
+        MeetingLink: item?.slot?.meetingLink,
       };
     });
 
@@ -506,6 +507,7 @@ exports.getVisitorsList = async (req, res) => {
           time: "$dates.slots.time",
           dateId: "$dates._id",
           slotId: "$dates.slots._id",
+          meetingLink: "$dates.slots.meetingLink",
         },
       },
     ]);
@@ -530,6 +532,7 @@ exports.getVisitorsList = async (req, res) => {
           dateTime: item?.time,
           dateId: item?.dateId,
           slotId: item?.slotId,
+          meetingLink: item?.meetingLink,
         };
         return result;
       });
@@ -600,6 +603,44 @@ exports.changeStatus = async (req, res) => {
     return res
       .status(200)
       .json({ success: true, message: "Status updated successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      message: err?.message || "Something went wrong",
+    });
+  }
+};
+
+exports.updateMeetingLink = async (req, res) => {
+  try {
+    const { eId, slotId, dateId, meetingLink } = req.body;
+
+    const response = await Slots.updateOne(
+      {
+        eid: eId,
+        dates: {
+          $elemMatch: {
+            _id: dateId,
+            "slots._id": slotId,
+          },
+        },
+      },
+      {
+        $set: {
+          "dates.$[element].slots.$[j].meetingLink": meetingLink,
+        },
+      },
+      {
+        arrayFilters: [{ "element._id": dateId }, { "j._id": slotId }],
+        upsert: true,
+        strict: false,
+      }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Meeting link updated successfully" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({

@@ -57,6 +57,7 @@ router.get('/briefcase/:exhibitorId', passport.authenticate('jwt-visitor', { ses
 
 router.get('/get-requested-slots', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.getVisitorsList);
 router.post('/change-status', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.changeStatus);
+router.post('/update-meeting-link', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.updateMeetingLink);
 
 router.get('/instant-meeting/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), instantMeetingController.getInstantMeetingByExhibitorId);
 router.put('/instant-meeting/:id', passport.authenticate('jwt-exhibitor', { session: false }), instantMeetingController.updateInstantMeeting);
