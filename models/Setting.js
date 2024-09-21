@@ -12,6 +12,8 @@ const settingSchema = new mongoose.Schema(
         blockVisitorLogin: { type: Boolean, default: false },
         blockExhibitorLogin: { type: Boolean, default: false },
         blockMessage: { type: Object },
+        meetingType: { type: String },
+        customVideoLink: { type: String },
         inauguration: { type: Boolean, default: false },
         active: { type: String, default: true },
         deleted: { type: String, default: false },
