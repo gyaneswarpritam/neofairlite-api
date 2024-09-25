@@ -47,7 +47,10 @@ exports.updateSetting = async (req, res) => {
         if (!setting) {
             return res.status(404).json({ message: 'Setting not found' });
         }
-        await slots.deleteMany({});
+        if (startDateTime || endDateTime || timezone) {
+            await slots.deleteMany({});
+        }
+
         res.status(200).json({ data: setting, message: 'Setting updated successfully' });
     } catch (error) {
         res.status(400).json({ message: error.message });
