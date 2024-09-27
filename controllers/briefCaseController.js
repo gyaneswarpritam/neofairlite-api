@@ -73,15 +73,18 @@ exports.getAllBriefcaseForExhibitor = async (req, res) => {
         const Briefcases = await Briefcase.find({ exhibitor: req.params.exhibitorId, catalog: true })
             .populate({
                 path: 'visitor',
-                select: 'name companyName email phone'
+                select: 'name companyName email phone',
+                options: { strictPopulate: false }
             })
             .populate({
                 path: 'stall',
-                select: 'stallName'
+                select: 'stallName',
+                options: { strictPopulate: false }
             })
             .populate({
                 path: 'product',
-                select: 'title url locked like review active deleted' // Adjust fields as needed
+                select: 'title url locked like review active deleted', // Adjust fields as needed
+                options: { strictPopulate: false }
             })
             .exec();
         if (!Briefcases || Briefcases.length === 0) {
@@ -89,7 +92,10 @@ exports.getAllBriefcaseForExhibitor = async (req, res) => {
             return res.status(notFoundObj.status).send(notFoundObj);
         }
 
-        const stallList = Briefcases.map(stall => ({
+        // Filter out entries where the visitor is null (due to deletion)
+        const filteredStalls = Briefcases.filter(stall => stall.visitor !== null);
+
+        const stallList = filteredStalls.map(stall => ({
             visitor: stall.visitor.name,
             companyName: stall.visitor.companyName,
             visitorEmail: stall.visitor.email,

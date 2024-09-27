@@ -67,11 +67,13 @@ exports.getAllVisitedStallForExhibitor = async (req, res) => {
         const visitedStalls = await VisitedStall.find({ exhibitor: req.params.exhibitorId })
             .populate({
                 path: 'visitor',
-                select: 'name companyName email phone' // Select only the fields you need
+                select: 'name companyName email phone', // Select only the fields you need
+                options: { strictPopulate: false }
             })
             .populate({
                 path: 'stall',
-                select: 'stallName' // Select only the fields you need
+                select: 'stallName', // Select only the fields you need
+                options: { strictPopulate: false }
             })
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
@@ -79,9 +81,11 @@ exports.getAllVisitedStallForExhibitor = async (req, res) => {
             res.status(successObj.status).send(successObj);
             return;
         }
+        // Filter out entries where the visitor is null (due to deletion)
+        const filteredStalls = visitedStalls.filter(stall => stall.visitor !== null);
 
         // Map the visited stalls to extract required information
-        const stallList = visitedStalls.map(stall => ({
+        const stallList = filteredStalls.map(stall => ({
             visitor: stall.visitor.name,
             companyName: stall.visitor.companyName,
             visitorEmail: stall.visitor.email,
