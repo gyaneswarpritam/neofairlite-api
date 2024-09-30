@@ -34,15 +34,15 @@ exports.createSetting = async (req, res) => {
 exports.updateSetting = async (req, res) => {
     try {
         const { startDateTime, endDateTime, timezone } = req.body;
+        if (startDateTime || endDateTime || timezone) {
+            // Convert startDateTime and endDateTime from the provided timezone to UTC
+            const startUTC = moment.tz(startDateTime, timezone).utc().toDate();
+            const endUTC = moment.tz(endDateTime, timezone).utc().toDate();
 
-        // Convert startDateTime and endDateTime from the provided timezone to UTC
-        const startUTC = moment.tz(startDateTime, timezone).utc().toDate();
-        const endUTC = moment.tz(endDateTime, timezone).utc().toDate();
-
-        // Update the request body with the UTC dates
-        req.body.startDateTime = startUTC;
-        req.body.endDateTime = endUTC;
-
+            // Update the request body with the UTC dates
+            req.body.startDateTime = startUTC;
+            req.body.endDateTime = endUTC;
+        }
         const setting = await Setting.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!setting) {
             return res.status(404).json({ message: 'Setting not found' });
