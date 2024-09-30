@@ -116,15 +116,20 @@ exports.getVisitorsByMostViewed = async (req, res) => {
     try {
         // Find all ProductVisited entries by productList ID and populate the visitor details
         const productVisitedEntries = await ProductVisited.find({ productList: productListId })
-            .populate('visitor', 'name email phone companyName');
+            .populate({
+                path: 'visitor',
+                select: 'name email phone companyName',
+                options: { strictPopulate: false }
+            });
 
         // If no ProductVisited entries are found, return a 404 error
         if (!productVisitedEntries || productVisitedEntries.length === 0) {
             return res.status(404).json({ message: 'No visitors found for this product list' });
         }
-
+        // Filter out entries where the visitor is null (due to deletion)
+        const filteredProductVisitedEntries = productVisitedEntries.filter(stall => stall.visitor !== null);
         // Extract visitor details from the ProductVisited entries and combine name into fullName
-        const visitors = productVisitedEntries.map(entry => {
+        const visitors = filteredProductVisitedEntries.map(entry => {
             const { name, email, phone, companyName } = entry.visitor;
             const visitorName = `${name || ''} `.trim();
             const visitorEmail = email;
@@ -151,15 +156,20 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
     try {
         // Find all Review entries by productList ID and populate the visitor details
         const reviewEntries = await Review.find({ productList: productListId })
-            .populate('visitor', 'name email phone companyName');
+            .populate({
+                path: 'visitor',
+                select: 'name email phone companyName',
+                options: { strictPopulate: false }
+            });
 
         // If no ProductVisited entries are found, return a 404 error
         if (!reviewEntries || reviewEntries.length === 0) {
             return res.status(404).json({ message: 'No visitors found for this product list' });
         }
-
+        // Filter out entries where the visitor is null (due to deletion)
+        const filteredReviewEntries = reviewEntries.filter(stall => stall.visitor !== null);
         // Extract visitor details from the ProductVisited entries and combine name into fullName
-        const visitors = reviewEntries.map(entry => {
+        const visitors = filteredReviewEntries.map(entry => {
             const { name, email, phone, companyName } = entry.visitor;
             const visitorName = `${name || ''}`.trim();
             const visitorEmail = email;
@@ -185,15 +195,21 @@ exports.getVisitorsByMostLiked = async (req, res) => {
     try {
         // Find all Like entries by productList ID and populate the visitor details
         const likeEntries = await Like.find({ productList: productListId })
-            .populate('visitor', 'name email phone companyName');
+            .populate({
+                path: 'visitor',
+                select: 'name email phone companyName',
+                options: { strictPopulate: false }
+            });
 
         // If no ProductVisited entries are found, return a 404 error
         if (!likeEntries || likeEntries.length === 0) {
             return res.status(404).json({ message: 'No visitors found for this product list' });
         }
-
+        console.log(likeEntries, `&&&&&&&&&&`)
+        // Filter out entries where the visitor is null (due to deletion)
+        const filteredLikeEntries = likeEntries.filter(stall => stall.visitor !== null);
         // Extract visitor details from the ProductVisited entries and combine name into fullName
-        const visitors = likeEntries.map(entry => {
+        const visitors = filteredLikeEntries.map(entry => {
             const { name, email, phone, companyName } = entry.visitor;
             const visitorName = `${name || ''} `.trim();
             const visitorEmail = email;
