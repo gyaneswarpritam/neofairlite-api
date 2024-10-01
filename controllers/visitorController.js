@@ -256,7 +256,7 @@ exports.verifyVisitorProfile = async (req, res) => {
         if (phone) {
             const phoneExists = await Visitor.findOne({ phone, _id: { $ne: visitorId } });
             if (phoneExists) {
-                return res.status(400).send('Phone number already exists');
+                return res.status(400).json({ status: 0, message: 'Phone number already in exists' });
             }
         }
 
