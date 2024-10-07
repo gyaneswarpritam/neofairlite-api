@@ -78,6 +78,7 @@ router.get('/briefcase/:visitorId', passport.authenticate('jwt-visitor', { sessi
 router.put('/briefcase/:id', passport.authenticate('jwt-visitor', { session: false }), briefCaseController.updateBriefcase);
 
 router.post('/trackVisitor', passport.authenticate('jwt-visitor', { session: false }), trackController.createTrackVisitor);
+router.post('/trackMeeting', passport.authenticate('jwt-visitor', { session: false }), trackController.createTrackMeeting);
 router.post('/book-slot', passport.authenticate('jwt-visitor', { session: false }), slotsController.bookSlot);
 router.get('/get-exhibitionDate', passport.authenticate('jwt-visitor', { session: false }), slotsController.getExhibitionDate);
 router.get('/list-slots', passport.authenticate('jwt-visitor', { session: false }), slotsController.listSlots);

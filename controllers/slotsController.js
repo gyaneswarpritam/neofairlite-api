@@ -5,6 +5,7 @@ const Slots = require("../models/slots.js");
 const Visitor = require("../models/Visitor.js");
 const Exhibitor = require("../models/Exhibitor.js");
 const Setting = require("../models/Setting.js");
+const { successResponse } = require("../utils/sendResponse.js");
 
 exports.listExhibitors = async (req, res) => {
   try {
@@ -333,7 +334,7 @@ exports.bookSlot = async (req, res) => {
         from: slotStartDateTimeInUTC,
         slots: slot,
       };
-      const response = await Slots.updateOne(
+      const response = await Slots.findOneAndUpdate(
         {
           eid: eId,
         },
@@ -341,10 +342,13 @@ exports.bookSlot = async (req, res) => {
           $push: {
             dates: date,
           },
-        }
+        },
+        { new: true }
       );
+      const successObj = successResponse('Slot Booked', response);
+      res.status(successObj.status).send(successObj);
     } else if (status === "pending") {
-      const response = await Slots.updateOne(
+      const response = await Slots.findOneAndUpdate(
         {
           eid: eId,
         },
@@ -357,12 +361,14 @@ exports.bookSlot = async (req, res) => {
           arrayFilters: [{ "element.from": slotStartDateTimeInUTC }],
           upsert: true,
           strict: false,
+          new: true
         }
       );
-      const a = response;
+      const successObj = successResponse('Slot Booked', response);
+      res.status(successObj.status).send(successObj);
     } else {
       // slotStartDateTimeInUTC
-      const response = await Slots.updateOne(
+      const response = await Slots.findOneAndUpdate(
         {
           eid: eId,
           dates: {
@@ -386,11 +392,14 @@ exports.bookSlot = async (req, res) => {
           ],
           upsert: true,
           strict: false,
+          new: true
         }
       );
+      const successObj = successResponse('Slot Booked', response);
+      res.status(successObj.status).send(successObj);
     }
 
-    res.status(200).json({ success: true, message: "Slot Booked" });
+    // res.status(200).json({ success: true, message: "Slot Booked" });
   } catch (err) {
     console.log(err);
     res
@@ -554,7 +563,7 @@ exports.changeStatus = async (req, res) => {
     const { eId, slotId, dateId, status } = req.body;
     if (status == "rejected") {
       //todo if rejected delete the collection
-      const response = await Slots.updateOne(
+      const response = await Slots.findOneAndUpdate(
         {
           eid: eId,
           dates: {
@@ -578,10 +587,13 @@ exports.changeStatus = async (req, res) => {
           ],
           upsert: true,
           strict: false,
+          new: true
         }
       );
+      const successObj = successResponse('Slot Status Changes', response);
+      res.status(successObj.status).send(successObj);
     } else {
-      const response = await Slots.updateOne(
+      const response = await Slots.findOneAndUpdate(
         {
           eid: eId,
         },
@@ -594,15 +606,18 @@ exports.changeStatus = async (req, res) => {
           arrayFilters: [{ "element._id": dateId }, { "j._id": slotId }],
           upsert: true,
           strict: false,
+          new: true
         }
       );
+      const successObj = successResponse('Slot Status Changes', response);
+      res.status(successObj.status).send(successObj);
     }
     // }else{
 
     // }
-    return res
-      .status(200)
-      .json({ success: true, message: "Status updated successfully" });
+    // return res
+    //   .status(200)
+    //   .json({ success: true, message: "Status updated successfully" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
