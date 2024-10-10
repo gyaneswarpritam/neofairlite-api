@@ -553,7 +553,6 @@ exports.getVisitorData = async (req, res) => {
 // Request OTP for verification
 exports.requestOtp = async (req, res) => {
     try {
-        debugger;
         const { phoneNumber } = req.body;
         if (!phoneNumber) {
             return res.status(400).json({ status: 0, message: 'Phone number is required' });
