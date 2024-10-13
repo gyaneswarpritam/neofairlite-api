@@ -25,7 +25,7 @@ const dateSchema = new mongoose.Schema({
 
 const SlotsSchema = new mongoose.Schema(
   {
-    eid: { type: String, required: true },
+    exhibitorId: { type: String, required: true },
     companyName: { type: String, required: true },
     dates: [dateSchema],
   },
