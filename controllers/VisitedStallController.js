@@ -255,7 +255,6 @@ exports.incrementProductVisitCount = async (req, res) => {
     const { stallId, productId, visitorId } = req.body;
 
     // Log incoming data for debugging
-    console.log('Incoming Data:', { stallId, productId, visitorId });
 
     try {
         // Check if an entry already exists

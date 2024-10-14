@@ -205,7 +205,6 @@ exports.getVisitorsByMostLiked = async (req, res) => {
         if (!likeEntries || likeEntries.length === 0) {
             return res.status(404).json({ message: 'No visitors found for this product list' });
         }
-        console.log(likeEntries, `&&&&&&&&&&`)
         // Filter out entries where the visitor is null (due to deletion)
         const filteredLikeEntries = likeEntries.filter(stall => stall.visitor !== null);
         // Extract visitor details from the ProductVisited entries and combine name into fullName
