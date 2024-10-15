@@ -147,17 +147,25 @@ exports.bookSlot = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
 
-    // Convert slotDate to the beginning of the day for consistent comparison (ignores time)
-    const startOfDay = new Date(slotDate);
-    startOfDay.setUTCHours(0, 0, 0, 0); // Ensure the time is reset to 00:00:00 for comparison
-    const endOfDay = new Date(startOfDay);
-    endOfDay.setUTCDate(startOfDay.getUTCDate() + 1);
+    // Convert both slotDate and time to start of the day for comparison
+    const startOfSlotDate = new Date(slotDate);
+    startOfSlotDate.setUTCHours(0, 0, 0, 0); // Ensure the time is reset to 00:00:00 for comparison
+    const endOfSlotDate = new Date(startOfSlotDate);
+    endOfSlotDate.setUTCDate(startOfSlotDate.getUTCDate() + 1);
 
-    // Find all bookings for this day
+    const startOfTimeDate = new Date(time);
+    startOfTimeDate.setUTCHours(0, 0, 0, 0); // Time date comparison start
+    const endOfTimeDate = new Date(startOfTimeDate);
+    endOfTimeDate.setUTCDate(startOfTimeDate.getUTCDate() + 1);
+
+    // Find all bookings for both slotDate and time date
     const existingBookings = await Booking.find({
       visitorId,
       exhibitorId,
-      slotTime: { $gte: startOfDay, $lt: endOfDay }, // Find all bookings for the day
+      $or: [
+        { slotTime: { $gte: startOfSlotDate, $lt: endOfSlotDate } },
+        { slotTime: { $gte: startOfTimeDate, $lt: endOfTimeDate } }
+      ],
       timeZone,
     });
 
@@ -214,6 +222,82 @@ exports.bookSlot = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
+// exports.bookSlot = async (req, res) => {
+//   try {
+//     const { visitorId, exhibitorId, slotDate, time, status, timeZone } = req.body;
+
+//     if (!visitorId || !exhibitorId || !slotDate || !time || !timeZone) {
+//       return res.status(400).json({ success: false, message: 'Missing required fields' });
+//     }
+
+//     // Convert slotDate to the beginning of the day for consistent comparison (ignores time)
+//     const startOfDay = new Date(slotDate);
+//     startOfDay.setUTCHours(0, 0, 0, 0); // Ensure the time is reset to 00:00:00 for comparison
+//     const endOfDay = new Date(startOfDay);
+//     endOfDay.setUTCDate(startOfDay.getUTCDate() + 1);
+
+//     // Find all bookings for this day
+//     const existingBookings = await Booking.find({
+//       visitorId,
+//       exhibitorId,
+//       slotTime: { $gte: startOfDay, $lt: endOfDay }, // Find all bookings for the day
+//       timeZone,
+//     });
+
+//     let pendingBooking = null;
+//     let rejectedBooking = null;
+
+//     // Check for booked slots and categorize bookings based on status
+//     for (const booking of existingBookings) {
+//       if (booking.status === 'booked') {
+//         return res.status(400).json({ success: false, message: 'You already have a booked slot for this day.' });
+//       }
+//       if (booking.status === 'pending') {
+//         pendingBooking = booking;
+//       } else if (booking.status === 'rejected') {
+//         rejectedBooking = booking;
+//       }
+//     }
+
+//     // If there's an existing pending booking, update its time and return without creating a new record
+//     if (pendingBooking) {
+//       pendingBooking.slotTime = time; // Update the time of the pending booking
+//       const updatedBooking = await pendingBooking.save();
+
+//       return res.status(200).json({ success: true, message: 'Pending slot updated successfully.', data: updatedBooking });
+//     }
+
+//     // If there's a rejected booking, create a new pending booking
+//     if (rejectedBooking) {
+//       const newPendingBooking = new Booking({
+//         visitorId,
+//         exhibitorId,
+//         slotTime: time,
+//         status: 'pending', // New booking with status 'pending'
+//         timeZone,
+//       });
+//       const newPendingBooked = await newPendingBooking.save();
+//       return res.status(200).json({ success: true, message: 'New pending slot booked successfully, previous rejection remains.', data: newPendingBooked });
+//     }
+
+//     // If no pending or rejected booking, create a new booking
+//     const newBooking = new Booking({
+//       visitorId,
+//       exhibitorId,
+//       slotTime: time,
+//       status: status || 'pending', // Default to 'pending' if no status is provided
+//       timeZone,
+//     });
+
+//     const bookingData = await newBooking.save();
+//     return res.status(200).json({ success: true, message: 'Slot booked successfully.', data: bookingData });
+
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
 
 exports.listBookedSlots = async (req, res) => {
   try {
