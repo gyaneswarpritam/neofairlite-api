@@ -98,5 +98,6 @@ router.post('/add-like', passport.authenticate('jwt-visitor', { session: false }
 // Route to add a review
 router.post('/review', passport.authenticate('jwt-visitor', { session: false }), reviewController.addReview);
 router.post('/reset-password', passport.authenticate('jwt-visitor', { session: false }), visitorController.resetPassword);
+router.post('/getStartEndTimeByDate/:dateParam', passport.authenticate('jwt-visitor', { session: false }), settingController.getStartEndTime);
 
 module.exports = router;

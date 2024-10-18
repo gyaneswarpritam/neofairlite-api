@@ -60,14 +60,38 @@ const generateSlotsForDate = (selectedDate, startTime, endTime, duration, timeZo
 };
 exports.listSlots = async (req, res) => {
   try {
-    const { timeZone, id, date, startDate, endDate, duration, visitorId } = req.query;
+    const { timeZone, id, date, duration, visitorId } = req.query;
 
     // Validate required parameters
-    if (!timeZone || !id || !date || !startDate || !endDate || !duration || !visitorId) {
+    if (!timeZone || !id || !date || !duration || !visitorId) {
       return res.status(400).json({ success: false, message: 'Missing required query parameters' });
     }
 
     const slotDuration = parseInt(duration, 10);
+
+    // Fetch the first document from the Setting collection
+    const setting = await Setting.findOne();  // Get the first document
+    if (!setting) {
+      return res.status(404).json({ success: false, message: 'No settings found' });
+    }
+
+    // Convert provided date to the appropriate timezone and start of the day for comparison
+    const targetDate = moment.tz(date, timeZone).startOf('day');
+
+    // Find the entry in dateList that matches the provided date
+    const matchingDateEntry = setting.dateList.find((entry) => {
+      const entryStartTime = moment.tz(entry.startTime, timeZone).startOf('day');
+      return entryStartTime.isSame(targetDate, 'day');
+    });
+
+    // If no matching date is found, return an error
+    if (!matchingDateEntry) {
+      return res.status(404).json({ success: false, message: 'No matching date found in dateList' });
+    }
+
+    // Extract startTime and endTime from the matching entry
+    const startDate = moment.tz(matchingDateEntry.startTime, timeZone);
+    const endDate = moment.tz(matchingDateEntry.endTime, timeZone);
 
     // Convert startDate and endDate from UTC to the target timezone
     const startDateInTimezone = moment.tz(startDate, 'UTC').tz(timeZone);
