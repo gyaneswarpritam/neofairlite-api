@@ -56,5 +56,40 @@ exports.getExhibitorNotification = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+exports.getExhibitorAllNotification = async (req, res) => {
+    try {
+        const exhibitorNotify = await ExhibitorNotification.find({ exhibitor: req.params.exhibitorId })
+            .populate({
+                path: 'visitor',
+                select: 'name companyName email phone'
+            })
+            .sort({ createdAt: -1 })
+            .exec();
+        const totalCount = await ExhibitorNotification.countDocuments();
+        const successObj = successResponseWithRecordCount('Exhibitor Notification List', exhibitorNotify, totalCount);
+        res.status(successObj.status).send(successObj);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.markAllAsRead = async (req, res) => {
+    try {
+        // Update all notifications to unread: true for the given exhibitorId
+        const result = await ExhibitorNotification.updateMany(
+            { exhibitor: req.params.exhibitorId, unread: false },
+            { $set: { unread: true } }
+        );
+
+        if (result.nModified > 0) {
+            res.status(200).json({ message: 'All notifications marked as read.' });
+        } else {
+            res.status(404).json({ message: 'No unread notifications found.' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 

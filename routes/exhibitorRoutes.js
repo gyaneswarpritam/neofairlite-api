@@ -64,6 +64,8 @@ router.put('/instant-meeting/:id', passport.authenticate('jwt-exhibitor', { sess
 
 router.post('/notification', passport.authenticate('jwt-exhibitor', { session: false }), notificationController.createVisitorNotification);
 router.get('/notification/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), notificationController.getExhibitorNotification);
+router.get('/notification-all/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), notificationController.getExhibitorAllNotification);
+router.put('/notification/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), notificationController.markAllAsRead);
 router.get('/likes/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), likeController.getProductsAndLikeCounts);
 router.get('/reviews/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getAverageReviewsByExhibitorId);
 router.get('/visited-product-count/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitedProductExhibitorId);
