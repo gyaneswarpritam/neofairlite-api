@@ -325,16 +325,28 @@ exports.bookSlot = async (req, res) => {
 
 exports.listBookedSlots = async (req, res) => {
   try {
-    // Extract visitorId from the query parameters
-    const { visitorId } = req.query;
+    // Extract visitorId and optional date from the query parameters
+    const { visitorId, date } = req.query;
 
     // Validate that visitorId is provided
     if (!visitorId) {
       return res.status(400).json({ success: false, message: 'visitorId is required' });
     }
 
-    // Find all bookings for the visitor
-    const bookedSlots = await Booking.find({ visitorId }).populate('exhibitorId', 'companyName'); // Assuming exhibitorId references an exhibitor model with companyName field
+    // Initialize a filter object
+    const filter = { visitorId };
+
+    // If date is provided, filter bookings for that date (assuming date format is YYYY-MM-DD)
+    if (date) {
+      const startOfDay = moment(date).startOf('day').toDate();
+      const endOfDay = moment(date).endOf('day').toDate();
+
+      // Add date range filter for slotTime
+      filter.slotTime = { $gte: startOfDay, $lte: endOfDay };
+    }
+
+    // Find all bookings for the visitor that match the filter
+    const bookedSlots = await Booking.find(filter).populate('exhibitorId', 'companyName'); // Assuming exhibitorId references an exhibitor model with companyName field
 
     // If no slots are found, return an empty list
     if (!bookedSlots.length) {
@@ -368,6 +380,7 @@ exports.listBookedSlots = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
 
 exports.getExhibitionDate = (req, res) => {
   const { timeZone } = req.query;
