@@ -21,7 +21,7 @@ const visitorSchema = new mongoose.Schema({
                 // If verification is "sms", then phone is required
                 return this.verification === 'sms' ? !!value && value.trim() !== '' : true;
             },
-            message: 'Phone number is required and cannot be empty when verification method is SMS.'
+            message: 'Phone number is required and cannot be empty when verification method is Whatsapp.'
         },
         default: ''
     },

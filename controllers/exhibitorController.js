@@ -63,9 +63,11 @@ exports.login = async (req, res, next) => {
         const validation = schemaValidator(exhibitorLoginSchema, req.body);
         if (validation.success) {
             const { email, password } = req.body;
-            const exhibitor = await Exhibitor.findOne({ email, active: true });
+            const exhibitor = await Exhibitor.findOne({ email });
             if (!exhibitor) {
-                return res.status(404).json({ status: 0, message: 'Exhibitor not found' });
+                return res.status(404).json({ status: 0, message: 'Email ID doesn’t exist. Please register' });
+            } else if (!exhibitor.active) {
+                return res.status(404).json({ status: 0, message: 'Pending Approval. Please try again once approved' });
             }
 
             // Check password

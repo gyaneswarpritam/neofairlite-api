@@ -118,7 +118,7 @@ exports.login = async (req, res) => {
             const visitor = await Visitor.findOne({ email, active: true, isVerified: true, emailVerified: true });
 
             if (!visitor) {
-                return res.status(404).json({ status: 0, message: 'Your email is not yet verified. Please verify your email to proceed.' });
+                return res.status(404).json({ status: 0, message: 'Email ID doesn’t exist. Please register.' });
             }
 
             const isMatch = await bcrypt.compare(password, visitor.password);
@@ -256,7 +256,7 @@ exports.verifyVisitorProfile = async (req, res) => {
         if (phone) {
             const phoneExists = await Visitor.findOne({ phone, _id: { $ne: visitorId } });
             if (phoneExists) {
-                return res.status(400).json({ status: 0, message: 'Phone number already in exists' });
+                return res.status(400).json({ status: 0, message: 'Phone number already exists' });
             }
         }
 

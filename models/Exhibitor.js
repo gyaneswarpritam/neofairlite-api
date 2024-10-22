@@ -11,9 +11,9 @@ var exhibitorSchema = new mongoose.Schema(
         loggedInTime: { type: String, default: '' },
         loggedInIP: { type: String, default: '' },
         deleted: { type: Boolean, default: false },
-        active: { type: String, default: false },
-        reject: { type: String, default: false },
-        blocked: { type: String, default: false },
+        active: { type: Boolean, default: false },
+        reject: { type: Boolean, default: false },
+        blocked: { type: Boolean, default: false },
     },
     {
         timestamps: true,
