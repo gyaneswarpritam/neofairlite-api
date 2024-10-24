@@ -6,6 +6,7 @@ const bookingSchema = new mongoose.Schema({
   slotTime: { type: Date, required: true },
   timeZone: { type: String, required: true },
   status: { type: String, enum: ['pending', 'booked', 'rejected'], default: 'pending' },
+  duration: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

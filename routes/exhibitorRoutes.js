@@ -83,6 +83,6 @@ router.delete('/gallery-video/:id', passport.authenticate('jwt-exhibitor', { ses
 router.delete('/stall-video/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallVideoController.deleteStallVideo);
 
 router.post('/reset-password', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.resetPassword);
-
+router.get('/list-booked-slots', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.listBookedSlotsExhibitor);
 
 module.exports = router;
