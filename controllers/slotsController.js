@@ -309,6 +309,66 @@ exports.listBookedSlots = async (req, res) => {
   }
 };
 
+// exports.listBookedSlotsExhibitor = async (req, res) => {
+//   try {
+//     // Extract exhibitorId and optional date from the query parameters
+//     const { exhibitorId, date } = req.query;
+
+//     // Validate that exhibitorId is provided
+//     if (!exhibitorId) {
+//       return res.status(400).json({ success: false, message: 'exhibitorId is required' });
+//     }
+
+//     // Initialize a filter object
+//     const filter = { exhibitorId };
+
+//     // If date is provided, filter bookings for that date (assuming date format is YYYY-MM-DD)
+//     if (date) {
+//       const startOfDay = moment(date).startOf('day').toDate();
+//       const endOfDay = moment(date).endOf('day').toDate();
+
+//       // Add date range filter for slotTime
+//       filter.slotTime = { $gte: startOfDay, $lte: endOfDay };
+//     }
+
+//     // Find all bookings for the exhibitor that match the filter, populate visitor details
+//     const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email'); // Assuming visitorId references a visitor model with name and email fields
+
+//     // If no slots are found, return an empty list
+//     if (!bookedSlots.length) {
+//       return res.json({ success: true, data: [], message: 'No booked slots found for this exhibitor.' });
+//     }
+
+//     // Map bookedSlots to the desired response structure
+//     const responseData = bookedSlots.map((slot, index) => {
+//       const timezone = slot.timeZone; // Use the stored timezone, or set a default if needed
+
+//       // Convert and format slot time based on the stored timezone
+//       const formattedDate = moment(slot.slotTime).tz(timezone).format('YYYY-MM-DD');
+//       const formattedTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
+
+//       return {
+//         SerialNo: index + 1,
+//         Date: formattedDate,
+//         Time: formattedTime,
+//         Timezone: timezone,
+//         VisitorName: slot.visitorId.name || 'N/A', // Default to 'N/A' if visitor name is unavailable
+//         VisitorEmail: slot.visitorId.email || 'N/A', // Default to 'N/A' if visitor email is unavailable
+//         Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable
+//         MeetingLink: slot.meetingLink || '', // Default to empty if meeting link is not available
+//         Duration: slot.duration || '' // Default to empty if meeting link is not available
+//       };
+//     });
+
+//     // Respond with the formatted data
+//     res.json({ success: true, data: responseData });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
+
 exports.listBookedSlotsExhibitor = async (req, res) => {
   try {
     // Extract exhibitorId and optional date from the query parameters
@@ -343,20 +403,28 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
     const responseData = bookedSlots.map((slot, index) => {
       const timezone = slot.timeZone; // Use the stored timezone, or set a default if needed
 
-      // Convert and format slot time based on the stored timezone
+      // Convert and format slot start time based on the stored timezone
       const formattedDate = moment(slot.slotTime).tz(timezone).format('YYYY-MM-DD');
+      const formattedStartTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
+
+      // Calculate the end time by adding the duration to the slotTime
+      const durationMinutes = parseInt(slot.duration) || 0; // Parse duration as integer, default to 0 if not available
+      const formattedEndTime = moment(slot.slotTime).add(durationMinutes, 'minutes').tz(timezone).format('HH:mm A');
       const formattedTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
+      // Format the full time range
+      const timeRange = `${formattedStartTime} - ${formattedEndTime}`;
 
       return {
         SerialNo: index + 1,
         Date: formattedDate,
         Time: formattedTime,
+        TimeRange: timeRange, // Show time as start time - end time
         Timezone: timezone,
         VisitorName: slot.visitorId.name || 'N/A', // Default to 'N/A' if visitor name is unavailable
         VisitorEmail: slot.visitorId.email || 'N/A', // Default to 'N/A' if visitor email is unavailable
         Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable
         MeetingLink: slot.meetingLink || '', // Default to empty if meeting link is not available
-        Duration: slot.duration || '' // Default to empty if meeting link is not available
+        Duration: slot.duration || 'N/A' // Default to 'N/A' if duration is not available
       };
     });
 
