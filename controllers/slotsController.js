@@ -495,6 +495,7 @@ exports.getVisitorsList = async (req, res) => {
           slotTime: 1,
           timeZone: 1,
           meetingLink: 1,
+          duration: 1 // Ensure duration is included
         },
       },
       {
@@ -516,6 +517,7 @@ exports.getVisitorsList = async (req, res) => {
           status: 1,
           slotTime: 1,
           meetingLink: 1,
+          duration: 1
         },
       },
     ]);
@@ -532,6 +534,11 @@ exports.getVisitorsList = async (req, res) => {
           .tz(item?.timeZone)
           .format("HH:mm");
 
+        // Calculate endDate by adding duration to slotTime
+        const endDate = moment(item?.slotTime)
+          .add(item?.duration || 0, 'minutes')
+          .toISOString();
+
         return {
           SerialNo,
           name: item?.visitorName || "N/A",
@@ -540,6 +547,8 @@ exports.getVisitorsList = async (req, res) => {
           status: item?.status || "N/A",
           time: timeInBookedTimeZone,
           date: dateInBookedTimeZone,
+          startDate: item?.slotTime,
+          endDate: endDate,
           dateTime: item?.slotTime,
           meetingId: item?._id, // Ensure this corresponds to your model's structure
           meetingLink: item?.meetingLink || "",
@@ -558,6 +567,90 @@ exports.getVisitorsList = async (req, res) => {
     });
   }
 };
+
+
+// exports.getVisitorsList = async (req, res) => {
+//   try {
+//     const { id } = req.query;
+
+//     // Use aggregation to match bookings based on exhibitorId
+//     const response = await Booking.aggregate([
+//       {
+//         $match: { exhibitorId: new mongoose.Types.ObjectId(id) }, // Ensure new is used here
+//       },
+//       {
+//         $project: {
+//           visitorId: 1,
+//           status: 1,
+//           slotTime: 1,
+//           timeZone: 1,
+//           meetingLink: 1,
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: "visitors", // Assuming there is a 'visitors' collection
+//           localField: "visitorId",
+//           foreignField: "_id",
+//           as: "visitorDetails",
+//         },
+//       },
+//       {
+//         $unwind: { path: "$visitorDetails", preserveNullAndEmptyArrays: true },
+//       },
+//       {
+//         $project: {
+//           visitorName: "$visitorDetails.name",
+//           visitorId: 1,
+//           timeZone: 1,
+//           status: 1,
+//           slotTime: 1,
+//           meetingLink: 1,
+//           duration: 1
+//         },
+//       },
+//     ]);
+
+//     if (response && response.length > 0) {
+//       let SerialNo = 0;
+//       const formattedResponse = response.map((item) => {
+//         SerialNo++;
+//         // Convert slotTime to the visitor's booked timezone
+//         const dateInBookedTimeZone = momentTimeZone(item?.slotTime)
+//           .tz(item?.timeZone)
+//           .format("YYYY-MM-DD");
+//         const timeInBookedTimeZone = momentTimeZone(item?.slotTime)
+//           .tz(item?.timeZone)
+//           .format("HH:mm");
+
+//         return {
+//           SerialNo,
+//           name: item?.visitorName || "N/A",
+//           visitorId: item?.visitorId,
+//           bookedTimeZone: item?.timeZone,
+//           status: item?.status || "N/A",
+//           time: timeInBookedTimeZone,
+//           date: dateInBookedTimeZone,
+//           startDate: item?.slotTime,
+//           endDate: ,
+//           dateTime: item?.slotTime,
+//           meetingId: item?._id, // Ensure this corresponds to your model's structure
+//           meetingLink: item?.meetingLink || "",
+//         };
+//       });
+
+//       return res.status(200).json({ success: true, data: formattedResponse });
+//     } else {
+//       return res.status(200).json({ success: true, data: [] });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({
+//       success: false,
+//       message: err?.message || "Something went wrong",
+//     });
+//   }
+// };
 
 exports.changeStatus = async (req, res) => {
   try {
