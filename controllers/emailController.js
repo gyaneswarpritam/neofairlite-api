@@ -807,4 +807,117 @@ emailController.sendForgotPassword = async function (data, password) {
     return info.messageId;
 };
 
+emailController.sendBookingConfirmationMail = async function (visitorId, exhibitorId, slotDetails) {
+    try {
+        // Fetch the visitor and exhibitor details
+        const visitor = await Visitor.findById(visitorId);
+        const exhibitor = await Exhibitor.findById(exhibitorId);
+
+        if (!visitor || !exhibitor) {
+            throw new Error("Visitor or Exhibitor not found");
+        }
+
+        // Define email content
+        const visitorEmailContent = `<!DOCTYPE html>
+        <html>
+        <body>
+          <h1>Booking Confirmation</h1>
+          <p>Dear ${visitor.name},</p>
+          <p>Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .</p>
+          <p>If you have any questions, please contact ${exhibitor.name} at ${exhibitor.email}.</p>
+          <p>We look forward to your participation!</p>
+        </body>
+        </html>`;
+
+        const exhibitorEmailContent = `<!DOCTYPE html>
+        <html>
+        <body>
+          <h1>New Booking Alert</h1>
+          <p>Dear ${exhibitor.name},</p>
+          <p>${visitor.name} has booked a slot with you on ${slotDetails.date} .</p>
+          <p>Visitor email: ${visitor.email}</p>
+          <p>For further details, please contact the visitor or check your bookings dashboard.</p>
+        </body>
+        </html>`;
+
+        // Send email to visitor
+        let visitorInfo = await transporter.sendMail({
+            from: "enquiry@neofairs.com",
+            to: visitor.email,
+            subject: "Slot Booking Confirmation",
+            html: visitorEmailContent,
+        });
+
+        // Send email to exhibitor
+        let exhibitorInfo = await transporter.sendMail({
+            from: "enquiry@neofairs.com",
+            to: exhibitor.email,
+            subject: "New Slot Booking Notification",
+            html: exhibitorEmailContent,
+        });
+
+        console.log("Emails sent:", { visitor: visitorInfo.messageId, exhibitor: exhibitorInfo.messageId });
+    } catch (error) {
+        console.error("Error sending booking confirmation email:", error);
+        throw error;
+    }
+};
+
+emailController.sendBookingRequestMail = async function (visitorId, exhibitorId, slotDetails) {
+    try {
+        // Fetch the visitor and exhibitor details
+        const visitor = await Visitor.findById(visitorId);
+        const exhibitor = await Exhibitor.findById(exhibitorId);
+
+        if (!visitor || !exhibitor) {
+            throw new Error("Visitor or Exhibitor not found");
+        }
+
+        // Define email content for visitor and exhibitor
+        const visitorEmailContent = `<!DOCTYPE html>
+        <html>
+        <body>
+          <h1>Booking Request Submitted</h1>
+          <p>Dear ${visitor.name},</p>
+          <p>Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.</p>
+          <p>We will notify you once the booking is confirmed.</p>
+          <p>Thank you for your patience.</p>
+        </body>
+        </html>`;
+
+        const exhibitorEmailContent = `<!DOCTYPE html>
+        <html>
+        <body>
+          <h1>New Booking Request</h1>
+          <p>Dear ${exhibitor.name},</p>
+          <p>${visitor.name} has requested a booking with you on ${slotDetails.date}.</p>
+          <p>Please review the request and confirm or deny it at your earliest convenience.</p>
+          <p>Thank you!</p>
+        </body>
+        </html>`;
+
+        // Send email to visitor
+        let visitorInfo = await transporter.sendMail({
+            from: "enquiry@neofairs.com",
+            to: visitor.email,
+            subject: "Booking Request Submitted",
+            html: visitorEmailContent,
+        });
+
+        // Send email to exhibitor
+        let exhibitorInfo = await transporter.sendMail({
+            from: "enquiry@neofairs.com",
+            to: exhibitor.email,
+            subject: "New Booking Request",
+            html: exhibitorEmailContent,
+        });
+
+        console.log("Booking request emails sent:", { visitor: visitorInfo.messageId, exhibitor: exhibitorInfo.messageId });
+    } catch (error) {
+        console.error("Error sending booking request email:", error);
+        throw error;
+    }
+};
+
+
 module.exports = emailController;

@@ -8,6 +8,7 @@ const Setting = require("../models/Setting.js");
 const { successResponse } = require("../utils/sendResponse.js");
 const Booking = require("../models/Booking.js");
 const mongoose = require("mongoose");
+const emailController = require("./emailController.js");
 
 const generateSlotsForDate = (selectedDate, startTime, endTime, duration, timeZone) => {
   const slots = [];
@@ -242,6 +243,62 @@ exports.bookSlot = async (req, res) => {
 
     const bookingData = await newBooking.save();
     return res.status(200).json({ success: true, message: 'Slot booked successfully.', data: bookingData });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+exports.sendBookingRequestMail = async (req, res) => {
+  try {
+    const { visitorId, exhibitorId, slotData } = req.body;
+    const { startDate, endDate, timeZone } = slotData;
+    const startTime = moment(startDate).tz(timeZone).format("hh:mm A");
+    const endTime = moment(endDate).tz(timeZone).format("hh:mm A");
+
+    slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
+    slotData.time = `${startTime} - ${endTime}`;
+
+    emailController.sendBookingRequestMail(visitorId, exhibitorId, slotData)
+    return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.sendBookingRequestMail = async (req, res) => {
+  try {
+    const { visitorId, exhibitorId, slotData } = req.body;
+    const { startDate, endDate, timeZone } = slotData;
+    const startTime = moment(startDate).tz(timeZone).format("hh:mm A");
+    const endTime = moment(endDate).tz(timeZone).format("hh:mm A");
+
+    slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
+    slotData.time = `${startTime} - ${endTime}`;
+
+    emailController.sendBookingRequestMail(visitorId, exhibitorId, slotData)
+    return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+exports.sendBookingApproveRejectMail = async (req, res) => {
+  try {
+    const { visitorId, exhibitorId, slotData } = req.body;
+    const { startDate, endDate, timeZone } = slotData;
+    const startTime = moment(startDate).tz(timeZone).format("hh:mm A");
+    const endTime = moment(endDate).tz(timeZone).format("hh:mm A");
+
+    slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
+    slotData.time = `${startTime} - ${endTime}`;
+
+    emailController.sendBookingConfirmationMail(visitorId, exhibitorId, slotData)
+    return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
 
   } catch (err) {
     console.error(err);
@@ -543,7 +600,7 @@ exports.getVisitorsList = async (req, res) => {
           SerialNo,
           name: item?.visitorName || "N/A",
           visitorId: item?.visitorId,
-          bookedTimeZone: item?.timeZone,
+          timeZone: item?.timeZone,
           status: item?.status || "N/A",
           time: timeInBookedTimeZone,
           date: dateInBookedTimeZone,

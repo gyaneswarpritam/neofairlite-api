@@ -7,7 +7,7 @@ const singleSlotsSchema = new mongoose.Schema(
     durationInMinutes: { type: Number, required: true },
     visitorId: { type: String },
     visitorName: { type: String },
-    bookedTimeZone: { type: String },
+    timeZone: { type: String },
     slotId: { type: String },
     meetingLink: { type: String, default: "" }
   },
