@@ -12,5 +12,14 @@ const sendOtp = async (phone, otp) => {
         console.error("Error sending OTP:", error);
     }
 };
+// Function to send OTP via SMS
+const sendPhoneMessage = async (phone, message) => {
+    const API_URL = `https://whatsappsms.creativepoint.in/api/sendText?token=cm2egr6cg1slzqjxxyc1l7w52&phone=${phone}&message=${message}`
+    try {
+        return await axios.get(API_URL);
+    } catch (error) {
+        console.error("Error sending OTP:", error);
+    }
+};
 
-module.exports = sendOtp;
+module.exports = { sendOtp, sendPhoneMessage };

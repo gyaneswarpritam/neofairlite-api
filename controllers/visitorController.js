@@ -13,8 +13,8 @@ const Stall = require('../models/Stall');
 const stripe = require('stripe')(process.env.STRIPE_SK_KEY);
 const crypto = require('crypto'); // To generate OTP
 const Otp = require('../models/otp');
-const sendOtp = require('../utils/otpService');
 const emailController = require('./emailController');
+const { sendOtp } = require('../utils/otpService');
 
 // Register a new visitor
 exports.register = async (req, res) => {

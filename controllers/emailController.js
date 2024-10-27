@@ -10,6 +10,7 @@ const awsKeys = {
 let nodemailer = require("nodemailer");
 const Exhibitor = require("../models/Exhibitor");
 const Visitor = require("../models/Visitor");
+const { sendPhoneMessage } = require("../utils/otpService");
 var transporter = nodemailer.createTransport(
     ses({
         accessKeyId: awsKeys.key,
@@ -840,13 +841,16 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
         </body>
         </html>`;
 
-        // Send email to visitor
-        let visitorInfo = await transporter.sendMail({
-            from: "enquiry@neofairs.com",
-            to: visitor.email,
-            subject: "Slot Booking Confirmation",
-            html: visitorEmailContent,
-        });
+        if (visitor.email) {
+            // Send email to visitor
+            let visitorInfo = await transporter.sendMail({
+                from: "enquiry@neofairs.com",
+                to: visitor.email,
+                subject: "Slot Booking Confirmation",
+                html: visitorEmailContent,
+            });
+        }
+
 
         // Send email to exhibitor
         let exhibitorInfo = await transporter.sendMail({
@@ -855,8 +859,8 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
             subject: "New Slot Booking Notification",
             html: exhibitorEmailContent,
         });
-
-        console.log("Emails sent:", { visitor: visitorInfo.messageId, exhibitor: exhibitorInfo.messageId });
+        visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
+        exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has booked a slot with you on ${slotDetails.date} .`);
     } catch (error) {
         console.error("Error sending booking confirmation email:", error);
         throw error;
@@ -896,13 +900,16 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
         </body>
         </html>`;
 
-        // Send email to visitor
-        let visitorInfo = await transporter.sendMail({
-            from: "enquiry@neofairs.com",
-            to: visitor.email,
-            subject: "Booking Request Submitted",
-            html: visitorEmailContent,
-        });
+        if (visitor.email) {
+            // Send email to visitor
+            let visitorInfo = await transporter.sendMail({
+                from: "enquiry@neofairs.com",
+                to: visitor.email,
+                subject: "Booking Request Submitted",
+                html: visitorEmailContent,
+            });
+        }
+
 
         // Send email to exhibitor
         let exhibitorInfo = await transporter.sendMail({
@@ -911,8 +918,8 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
             subject: "New Booking Request",
             html: exhibitorEmailContent,
         });
-
-        console.log("Booking request emails sent:", { visitor: visitorInfo.messageId, exhibitor: exhibitorInfo.messageId });
+        visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.`);
+        exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has requested a booking with you on ${slotDetails.date}.`);
     } catch (error) {
         console.error("Error sending booking request email:", error);
         throw error;
