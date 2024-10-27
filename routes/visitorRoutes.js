@@ -15,6 +15,7 @@ const instantMeetingController = require('../controllers/instantMeetingControlle
 const notificationController = require('../controllers/notificationController');
 const likeController = require('../controllers/likeController');
 const reviewController = require('../controllers/reviewController');
+const emailController = require('../controllers/emailController');
 
 // Configure JWT Strategy
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -100,5 +101,7 @@ router.post('/add-like', passport.authenticate('jwt-visitor', { session: false }
 router.post('/review', passport.authenticate('jwt-visitor', { session: false }), reviewController.addReview);
 router.post('/reset-password', passport.authenticate('jwt-visitor', { session: false }), visitorController.resetPassword);
 router.post('/getStartEndTimeByDate/:dateParam', passport.authenticate('jwt-visitor', { session: false }), settingController.getStartEndTime);
+
+router.post('/stall-visit', passport.authenticate('jwt-visitor', { session: false }), emailController.sendStallVisitSMS);
 
 module.exports = router;

@@ -2,6 +2,7 @@ var ses = require("nodemailer-ses-transport");
 const hbs = require("nodemailer-express-handlebars");
 const path = require("path");
 const crypto = require("crypto");
+const moment = require("moment");
 
 const awsKeys = {
     key: process.env.AWS_KEY,
@@ -920,6 +921,20 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
         });
         visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.`);
         exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has requested a booking with you on ${slotDetails.date}.`);
+    } catch (error) {
+        console.error("Error sending booking request email:", error);
+        throw error;
+    }
+};
+
+emailController.sendStallVisitSMS = async function (req, res) {
+    try {
+        const { visitorId, exhibitorId } = req.body;
+        // Fetch the visitor and exhibitor details
+        const visitor = await Visitor.findById(visitorId);
+        const exhibitor = await Exhibitor.findById(exhibitorId);
+
+        exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has visited the stall ${moment().format('DD-MM-YYYY HH:mm A')}.`);
     } catch (error) {
         console.error("Error sending booking request email:", error);
         throw error;
