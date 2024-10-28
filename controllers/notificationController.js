@@ -90,6 +90,23 @@ exports.markAllAsRead = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+exports.markAllAsReadVisitor = async (req, res) => {
+    try {
+        // Update all notifications to unread: true for the given exhibitorId
+        const result = await VisitorNotification.updateMany(
+            { visitor: req.params.visitorId, unread: false },
+            { $set: { unread: true } }
+        );
+
+        if (result.nModified > 0) {
+            res.status(200).json({ message: 'All notifications marked as read.' });
+        } else {
+            res.status(404).json({ message: 'No unread notifications found 11.' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 
 

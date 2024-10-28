@@ -103,5 +103,5 @@ router.post('/reset-password', passport.authenticate('jwt-visitor', { session: f
 router.post('/getStartEndTimeByDate/:dateParam', passport.authenticate('jwt-visitor', { session: false }), settingController.getStartEndTime);
 
 router.post('/stall-visit', passport.authenticate('jwt-visitor', { session: false }), emailController.sendStallVisitSMS);
-
+router.put('/notification/:visitorId', passport.authenticate('jwt-visitor', { session: false }), notificationController.markAllAsReadVisitor);
 module.exports = router;
