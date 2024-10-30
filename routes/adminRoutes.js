@@ -10,6 +10,7 @@ const visitorController = require('../controllers/visitorController');
 const exhibitorController = require('../controllers/exhibitorController');
 const briefCaseController = require('../controllers/briefCaseController');
 const trackController = require('../controllers/trackController');
+const auditoriumController = require('../controllers/auditoriumController');
 
 const { jwtSecret } = require('../config/config');
 const Visitor = require('../models/Visitor');
@@ -71,5 +72,14 @@ router.get('/visitor-tracking-report', passport.authenticate('jwt-admin', { sess
 router.get('/meeting-tracking-report', passport.authenticate('jwt-admin', { session: false }), trackController.getTrackMeeting);
 // router.get('/exhibitor-tracking-report', passport.authenticate('jwt-admin', { session: false }), reportController.getAllStall);
 router.get('/catalogue-visit-report', passport.authenticate('jwt-admin', { session: false }), adminController.getAllExhibitorsWithProductDetails);
+
+
+/*Auditorium Route*/
+router.post('/auditorium', passport.authenticate('jwt-admin', { session: false }), auditoriumController.createAuditorium);
+router.get('/auditorium', passport.authenticate('jwt-admin', { session: false }), auditoriumController.getAllAuditorium);
+router.get('/auditorium/:id', passport.authenticate('jwt-admin', { session: false }), auditoriumController.getAuditoriumById);
+router.put('/auditorium/:id', passport.authenticate('jwt-admin', { session: false }), auditoriumController.updateAuditorium);
+router.delete('/auditorium/:id', passport.authenticate('jwt-admin', { session: false }), auditoriumController.deleteAuditorium);
+
 
 module.exports = router;

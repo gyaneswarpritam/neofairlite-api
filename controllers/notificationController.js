@@ -40,6 +40,23 @@ exports.getVisitorNotification = async (req, res) => {
     }
 };
 
+exports.getVisitorAllNotification = async (req, res) => {
+    try {
+        const visitorNotify = await VisitorNotification.find({ visitor: req.params.visitorId })
+            .populate({
+                path: 'exhibitor',
+                select: 'name companyName email phone' // Select only the fields you need
+            })
+            .sort({ createdAt: -1 })
+            .exec();
+        const totalCount = await VisitorNotification.countDocuments();
+        const successObj = successResponseWithRecordCount('Visitor Notification List', visitorNotify, totalCount);
+        res.status(successObj.status).send(successObj);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.getExhibitorNotification = async (req, res) => {
     try {
         const exhibitorNotify = await ExhibitorNotification.find({ exhibitor: req.params.exhibitorId, unread: false })

@@ -16,6 +16,7 @@ const notificationController = require('../controllers/notificationController');
 const likeController = require('../controllers/likeController');
 const reviewController = require('../controllers/reviewController');
 const emailController = require('../controllers/emailController');
+const auditoriumController = require('../controllers/auditoriumController');
 
 // Configure JWT Strategy
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -93,6 +94,7 @@ router.put('/instant-meeting/:id', passport.authenticate('jwt-visitor', { sessio
 
 router.post('/notification', passport.authenticate('jwt-visitor', { session: false }), notificationController.createExhibitorNotification);
 router.get('/notification/:visitorId', passport.authenticate('jwt-visitor', { session: false }), notificationController.getVisitorNotification);
+router.get('/all-notification/:visitorId', passport.authenticate('jwt-visitor', { session: false }), notificationController.getVisitorAllNotification);
 
 // Route to add a like
 router.post('/add-like', passport.authenticate('jwt-visitor', { session: false }), likeController.addLike);
@@ -104,4 +106,7 @@ router.post('/getStartEndTimeByDate/:dateParam', passport.authenticate('jwt-visi
 
 router.post('/stall-visit', passport.authenticate('jwt-visitor', { session: false }), emailController.sendStallVisitSMS);
 router.put('/notification/:visitorId', passport.authenticate('jwt-visitor', { session: false }), notificationController.markAllAsReadVisitor);
+
+router.get('/auditorium', passport.authenticate('jwt-visitor', { session: false }), auditoriumController.getAllAuditorium);
+
 module.exports = router;
