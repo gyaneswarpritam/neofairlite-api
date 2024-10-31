@@ -88,5 +88,6 @@ router.get('/list-booked-slots', passport.authenticate('jwt-exhibitor', { sessio
 router.post('/book-slot-email', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.sendBookingApproveRejectMail);
 
 router.get('/auditorium', passport.authenticate('jwt-exhibitor', { session: false }), auditoriumController.getAllAuditorium);
+router.get('/profile/:id', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.getExhibitorById);
 
 module.exports = router;

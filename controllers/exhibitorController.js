@@ -265,7 +265,9 @@ exports.getExhibitorById = async (req, res) => {
             _id: exhibitor._id,
             name: exhibitor.name,
             email: exhibitor.email,
-            companyName: exhibitor.companyName
+            companyName: exhibitor.companyName,
+            phone: exhibitor.phone,
+            companyAddress: exhibitor.companyAddress,
         };
         const successObj = successResponse('Exhibitor Details', modifiedExhibitor);
         res.status(successObj.status).send(successObj);

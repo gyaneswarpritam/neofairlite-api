@@ -120,6 +120,11 @@ exports.getVisitorsByMostViewed = async (req, res) => {
                 path: 'visitor',
                 select: 'name email phone companyName',
                 options: { strictPopulate: false }
+            })
+            .populate({
+                path: 'productList',
+                select: 'title url',
+                options: { strictPopulate: false }
             });
 
         // If no ProductVisited entries are found, return a 404 error
@@ -131,6 +136,8 @@ exports.getVisitorsByMostViewed = async (req, res) => {
         // Extract visitor details from the ProductVisited entries and combine name into fullName
         const visitors = filteredProductVisitedEntries.map(entry => {
             const { name, email, phone, companyName } = entry.visitor;
+            const { title, url } = entry.productList;
+            const { updatedAt } = entry;
             const visitorName = `${name || ''} `.trim();
             const visitorEmail = email;
             const visitorPhone = phone;
@@ -138,7 +145,10 @@ exports.getVisitorsByMostViewed = async (req, res) => {
                 visitorName,
                 visitorEmail,
                 visitorPhone,
-                companyName
+                companyName,
+                title,
+                url,
+                updatedAt
             };
         });
 
@@ -160,6 +170,11 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
                 path: 'visitor',
                 select: 'name email phone companyName',
                 options: { strictPopulate: false }
+            })
+            .populate({
+                path: 'productList',
+                select: 'title url',
+                options: { strictPopulate: false }
             });
 
         // If no ProductVisited entries are found, return a 404 error
@@ -171,6 +186,8 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
         // Extract visitor details from the ProductVisited entries and combine name into fullName
         const visitors = filteredReviewEntries.map(entry => {
             const { name, email, phone, companyName } = entry.visitor;
+            const { title, url } = entry.productList;
+            const { updatedAt } = entry;
             const visitorName = `${name || ''}`.trim();
             const visitorEmail = email;
             const visitorPhone = phone;
@@ -178,7 +195,10 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
                 visitorName,
                 visitorEmail,
                 visitorPhone,
-                companyName
+                companyName,
+                title,
+                url,
+                updatedAt
             };
         });
 
@@ -199,6 +219,11 @@ exports.getVisitorsByMostLiked = async (req, res) => {
                 path: 'visitor',
                 select: 'name email phone companyName',
                 options: { strictPopulate: false }
+            })
+            .populate({
+                path: 'productList',
+                select: 'title url',
+                options: { strictPopulate: false }
             });
 
         // If no ProductVisited entries are found, return a 404 error
@@ -210,6 +235,8 @@ exports.getVisitorsByMostLiked = async (req, res) => {
         // Extract visitor details from the ProductVisited entries and combine name into fullName
         const visitors = filteredLikeEntries.map(entry => {
             const { name, email, phone, companyName } = entry.visitor;
+            const { title, url } = entry.productList;
+            const { updatedAt } = entry;
             const visitorName = `${name || ''} `.trim();
             const visitorEmail = email;
             const visitorPhone = phone;
@@ -217,7 +244,10 @@ exports.getVisitorsByMostLiked = async (req, res) => {
                 visitorName,
                 visitorEmail,
                 visitorPhone,
-                companyName
+                companyName,
+                title,
+                url,
+                updatedAt
             };
         });
 

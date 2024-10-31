@@ -5,59 +5,59 @@ const crypto = require("crypto");
 const moment = require("moment");
 
 const awsKeys = {
-    key: process.env.AWS_KEY,
-    secret: process.env.AWS_SECRET,
+  key: process.env.AWS_KEY,
+  secret: process.env.AWS_SECRET,
 };
 let nodemailer = require("nodemailer");
 const Exhibitor = require("../models/Exhibitor");
 const Visitor = require("../models/Visitor");
 const { sendPhoneMessage } = require("../utils/otpService");
 var transporter = nodemailer.createTransport(
-    ses({
-        accessKeyId: awsKeys.key,
-        secretAccessKey: awsKeys.secret,
-        region: "us-east-1",
-    })
+  ses({
+    accessKeyId: awsKeys.key,
+    secretAccessKey: awsKeys.secret,
+    region: "us-east-1",
+  })
 );
 // point to the template folder
 const handlebarOptions = {
-    viewEngine: {
-        extname: ".hbs",
-        layoutsDir: "views/",
-        defaultLayout: "email",
-    },
-    viewPath: "views/",
-    extName: ".hbs",
+  viewEngine: {
+    extname: ".hbs",
+    layoutsDir: "views/",
+    defaultLayout: "email",
+  },
+  viewPath: "views/",
+  extName: ".hbs",
 };
 // use a template file with nodemailer
 transporter.use("compile", hbs(handlebarOptions));
 const emailController = {};
 emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
-    try {
-        // Generate a verification token
-        const verificationToken = crypto.randomBytes(32).toString("hex");
+  try {
+    // Generate a verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
 
-        // Update the existing visitor record with the verification token and expiry time
-        const visitor = await Visitor.findByIdAndUpdate(
-            visitorId,
-            {
-                verificationToken: verificationToken,
-                verificationTokenExpires: Date.now() + 2592000000, // 30 days expiration
-            },
-            { new: true } // Return the updated document
-        );
+    // Update the existing visitor record with the verification token and expiry time
+    const visitor = await Visitor.findByIdAndUpdate(
+      visitorId,
+      {
+        verificationToken: verificationToken,
+        verificationTokenExpires: Date.now() + 2592000000, // 30 days expiration
+      },
+      { new: true } // Return the updated document
+    );
 
-        if (!visitor) {
-            throw new Error("visitor not found");
-        }
+    if (!visitor) {
+      throw new Error("visitor not found");
+    }
 
-        // Send the verification email
-        let info = await transporter.sendMail({
-            from: "enquiry@neofairs.com",
-            cc: "enquiry@neofairs.com",
-            to: visitor.email,
-            subject: "Verify Your Email Address",
-            html: `<!DOCTYPE html>
+    // Send the verification email
+    let info = await transporter.sendMail({
+      from: "enquiry@neofairs.com",
+      cc: "enquiry@neofairs.com",
+      to: visitor.email,
+      subject: "Verify Your Email Address",
+      html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -115,6 +115,18 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     .cta-button:hover {
       background-color: #0056b3;
     }
+    /* Social Media Links */
+    .social-media {
+      margin-bottom: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     /* Responsive styling */
     @media (max-width: 600px) {
       .content {
@@ -134,7 +146,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/neofairs-lite/logo.svg" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
         <h1>Welcome to NeoFairs</h1>
       </td>
     </tr>
@@ -146,38 +158,50 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
         <p>If you did not request this, please ignore this email.</p>
       </td>
     </tr>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <p>&copy; [Year] NeoFairs. All rights reserved.</p>
+        <div class="social-media">
+          <a href="https://www.facebook.com/neofairs" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          </a>
+          <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          </a>
+          <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          </a>
+        </div>
+        <p>&copy; 2024 NeoFairs. All rights reserved.</p>
       </td>
     </tr>
   </table>
 </body>
 </html>
+
 `,
-        });
-        return info.messageId;
-    } catch (error) {
-        console.error("Error sending verification email:", error);
-        throw error;
-    }
+    });
+    return info.messageId;
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw error;
+  }
 };
 emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
-    try {
-        const exhibitor = await Exhibitor.findById(exhibitorId);
+  try {
+    const exhibitor = await Exhibitor.findById(exhibitorId);
 
-        if (!exhibitor) {
-            throw new Error("exhibitor not found");
-        }
+    if (!exhibitor) {
+      throw new Error("exhibitor not found");
+    }
 
-        // Send the verification email
-        let info = await transporter.sendMail({
-            from: "enquiry@neofairs.com",
-            cc: "enquiry@neofairs.com",
-            to: exhibitor.email,
-            subject: "Registration Confirmation",
-            html: `<!DOCTYPE html>
+    // Send the verification email
+    let info = await transporter.sendMail({
+      from: "enquiry@neofairs.com",
+      cc: "enquiry@neofairs.com",
+      to: exhibitor.email,
+      subject: "Registration Confirmation",
+      html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -221,6 +245,18 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       padding: 20px;
       background-color: #fff;
     }
+    /* Social Media Links */
+    .social-media {
+      margin-bottom: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     /* Responsive styling */
     @media (max-width: 600px) {
       .content {
@@ -237,7 +273,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/neofairs-lite/logo.svg" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
         <h1>Welcome to NeoFairs</h1>
       </td>
     </tr>
@@ -249,30 +285,42 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
         <p>If you did not request this, please ignore this email.</p>
       </td>
     </tr>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <p>&copy; [Year] NeoFairs. All rights reserved.</p>
+        <div class="social-media">
+          <a href="https://www.facebook.com/neofairs" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          </a>
+          <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          </a>
+          <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          </a>
+        </div>
+        <p>&copy; 2024 NeoFairs. All rights reserved.</p>
       </td>
     </tr>
   </table>
 </body>
 </html>
+
 `,
-        });
-        return info.messageId;
-    } catch (error) {
-        console.error("Error sending verification email:", error);
-        throw error;
-    }
+    });
+    return info.messageId;
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw error;
+  }
 };
 emailController.sendApprovalExhibitorMail = async function (data) {
-    let info = await transporter.sendMail({
-        from: "enquiry@neofairs.com",
-        cc: "enquiry@neofairs.com",
-        to: data["email"],
-        subject: "Approval Email",
-        html: `
+  let info = await transporter.sendMail({
+    from: "enquiry@neofairs.com",
+    cc: "enquiry@neofairs.com",
+    to: data["email"],
+    subject: "Approval Email",
+    html: `
         <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -317,6 +365,18 @@ emailController.sendApprovalExhibitorMail = async function (data) {
       padding: 20px;
       background-color: #fff;
     }
+    /* Social Media Links */
+    .social-media {
+      margin-bottom: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     /* Responsive styling */
     @media (max-width: 600px) {
       .content {
@@ -333,7 +393,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/neofairs-lite/logo.svg" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
         <h1>Registration Approved</h1>
       </td>
     </tr>
@@ -347,19 +407,29 @@ emailController.sendApprovalExhibitorMail = async function (data) {
         <p>If you did not request this, please ignore this email.</p>
       </td>
     </tr>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <p>&copy; [Year] NeoFairs. All rights reserved.</p>
+        <div class="social-media">
+          <a href="https://www.facebook.com/neofairs" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          </a>
+          <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          </a>
+          <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          </a>
+        </div>
+        <p>&copy; 2024 NeoFairs. All rights reserved.</p>
       </td>
     </tr>
   </table>
 </body>
 </html>
-
         `,
-    });
-    return info.messageId;
+  });
+  return info.messageId;
 };
 // emailController.sendApprovalExhibitorMail = async function (data, password) {
 //     let info = await transporter.sendMail({
@@ -647,7 +717,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
 //                                                                                                                         <table cellspacing="0" cellpadding="0" border="0" class="bmeFollowItem" type="facebook" style="float: left; display: block;" align="left">
 //                                                                                                                             <tbody>
 //                                                                                                                                 <tr>
-//                                                                                                                                     <td align="left" class="bmeFollowItemIcon" gutter="10" width="24" style="padding-right:10px;height:20px;"> <a href="https://facebook.com/" target=_blank style="display: inline-block;background-color: rgb(53, 91, 161);border-radius: 4px;border-style: none; border-width: 0px; border-color: rgba(0, 0, 0, 0);" target="_blank"><img src="https://s3.amazonaws.com/admin.devstarguru.storage/emailimage/facebook.png" alt="Facebook" style="display: block; max-width: 114px;" border="0" width="24" height="24"></a></td>
+//                                                                                                                                     <td align="left" class="bmeFollowItemIcon" gutter="10" width="24" style="padding-right:10px;height:20px;"> <a href="https://www.facebook.com/neofairs/" target=_blank style="display: inline-block;background-color: rgb(53, 91, 161);border-radius: 4px;border-style: none; border-width: 0px; border-color: rgba(0, 0, 0, 0);" target="_blank"><img src="https://s3.amazonaws.com/admin.devstarguru.storage/emailimage/facebook.png" alt="Facebook" style="display: block; max-width: 114px;" border="0" width="24" height="24"></a></td>
 //                                                                                                                                 </tr>
 //                                                                                                                             </tbody>
 //                                                                                                                         </table>
@@ -655,7 +725,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
 //                                                                                                                         <table cellspacing="0" cellpadding="0" border="0" class="bmeFollowItem" type="twitter" style="float: left; display: block;" align="left">
 //                                                                                                                             <tbody>
 //                                                                                                                                 <tr>
-//                                                                                                                                     <td align="left" class="bmeFollowItemIcon" gutter="10" width="24" style="padding-right:10px;height:20px;"> <a href="https://twitter.com" target=_blank style="display: inline-block;background-color: rgb(50, 203, 255);border-radius: 4px;border-style: none; border-width: 0px; border-color: rgba(0, 0, 0, 0);" target="_blank"><img src="https://s3.amazonaws.com/admin.devstarguru.storage/emailimage/twitter.png" alt="Twitter" style="display: block; max-width: 114px;" border="0" width="24" height="24"></a></td>
+//                                                                                                                                     <td align="left" class="bmeFollowItemIcon" gutter="10" width="24" style="padding-right:10px;height:20px;"> <a href="https://www.instagram.com/neofairs.virtualevents/" target=_blank style="display: inline-block;background-color: rgb(50, 203, 255);border-radius: 4px;border-style: none; border-width: 0px; border-color: rgba(0, 0, 0, 0);" target="_blank"><img src="https://s3.amazonaws.com/admin.devstarguru.storage/emailimage/twitter.png" alt="Twitter" style="display: block; max-width: 114px;" border="0" width="24" height="24"></a></td>
 //                                                                                                                                 </tr>
 //                                                                                                                             </tbody>
 //                                                                                                                         </table>
@@ -704,12 +774,12 @@ emailController.sendApprovalExhibitorMail = async function (data) {
 //     return info.messageId;
 // };
 emailController.sendForgotPassword = async function (data, password) {
-    let info = await transporter.sendMail({
-        from: "enquiry@neofairs.com",
-        cc: "enquiry@neofairs.com",
-        to: data["email"],
-        subject: "Forgot Password Email",
-        html: `<!DOCTYPE html>
+  let info = await transporter.sendMail({
+    from: "enquiry@neofairs.com",
+    cc: "enquiry@neofairs.com",
+    to: data["email"],
+    subject: "Forgot Password Email",
+    html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -764,6 +834,18 @@ emailController.sendForgotPassword = async function (data, password) {
       border-radius: 4px;
       font-size: 16px;
     }
+    /* Social Media Links */
+    .social-media {
+      margin-top: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     /* Responsive styling */
     @media (max-width: 600px) {
       .content {
@@ -780,7 +862,7 @@ emailController.sendForgotPassword = async function (data, password) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/neofairs-lite/logo.svg" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
         <h1>Confirmation</h1>
       </td>
     </tr>
@@ -794,32 +876,44 @@ emailController.sendForgotPassword = async function (data, password) {
         <p>If you didn’t request this, please ignore this email.</p>
       </td>
     </tr>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
         <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+        <div class="social-media">
+          <a href="https://www.facebook.com/neofairs" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          </a>
+          <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          </a>
+          <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          </a>
+        </div>
       </td>
     </tr>
   </table>
 </body>
 </html>
+
 `,
-    });
-    return info.messageId;
+  });
+  return info.messageId;
 };
 
 emailController.sendBookingConfirmationMail = async function (visitorId, exhibitorId, slotDetails) {
-    try {
-        // Fetch the visitor and exhibitor details
-        const visitor = await Visitor.findById(visitorId);
-        const exhibitor = await Exhibitor.findById(exhibitorId);
+  try {
+    // Fetch the visitor and exhibitor details
+    const visitor = await Visitor.findById(visitorId);
+    const exhibitor = await Exhibitor.findById(exhibitorId);
 
-        if (!visitor || !exhibitor) {
-            throw new Error("Visitor or Exhibitor not found");
-        }
+    if (!visitor || !exhibitor) {
+      throw new Error("Visitor or Exhibitor not found");
+    }
 
-        // Define email content
-        const visitorEmailContent = `<!DOCTYPE html>
+    // Define email content
+    const visitorEmailContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -860,6 +954,17 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       padding: 10px;
       background-color: #f9f9f9;
     }
+    .social-media {
+      margin-top: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     @media (max-width: 600px) {
       .container {
         padding: 15px;
@@ -880,16 +985,28 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       <p>If you have any questions, please contact ${exhibitor.name} at ${exhibitor.email}.</p>
       <p>We look forward to your participation!</p>
     </div>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <div class="footer">
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+      <div class="social-media">
+        <a href="https://www.facebook.com/neofairs" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+        </a>
+        <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+        </a>
+        <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+        </a>
+      </div>
     </div>
   </div>
 </body>
 </html>
+
 `;
 
-        const exhibitorEmailContent = `<!DOCTYPE html>
+    const exhibitorEmailContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -930,6 +1047,17 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       padding: 10px;
       background-color: #f9f9f9;
     }
+    .social-media {
+      margin-top: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     @media (max-width: 600px) {
       .container {
         padding: 15px;
@@ -950,53 +1078,65 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       <p>Visitor email: ${visitor.email}</p>
       <p>For further details, please contact the visitor or check your bookings dashboard.</p>
     </div>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <div class="footer">
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+      <div class="social-media">
+        <a href="https://www.facebook.com/neofairs" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+        </a>
+        <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+        </a>
+        <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+        </a>
+      </div>
     </div>
   </div>
 </body>
 </html>
+
 `;
 
-        if (visitor.email) {
-            // Send email to visitor
-            let visitorInfo = await transporter.sendMail({
-                from: "enquiry@neofairs.com",
-                to: visitor.email,
-                subject: "Slot Booking Confirmation",
-                html: visitorEmailContent,
-            });
-        }
-
-
-        // Send email to exhibitor
-        let exhibitorInfo = await transporter.sendMail({
-            from: "enquiry@neofairs.com",
-            to: exhibitor.email,
-            subject: "New Slot Booking Notification",
-            html: exhibitorEmailContent,
-        });
-        visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
-        exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has booked a slot with you on ${slotDetails.date} .`);
-    } catch (error) {
-        console.error("Error sending booking confirmation email:", error);
-        throw error;
+    if (visitor.email) {
+      // Send email to visitor
+      let visitorInfo = await transporter.sendMail({
+        from: "enquiry@neofairs.com",
+        to: visitor.email,
+        subject: "Slot Booking Confirmation",
+        html: visitorEmailContent,
+      });
     }
+
+
+    // Send email to exhibitor
+    let exhibitorInfo = await transporter.sendMail({
+      from: "enquiry@neofairs.com",
+      to: exhibitor.email,
+      subject: "New Slot Booking Notification",
+      html: exhibitorEmailContent,
+    });
+    visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
+    exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has booked a slot with you on ${slotDetails.date} .`);
+  } catch (error) {
+    console.error("Error sending booking confirmation email:", error);
+    throw error;
+  }
 };
 
 emailController.sendBookingRequestMail = async function (visitorId, exhibitorId, slotDetails) {
-    try {
-        // Fetch the visitor and exhibitor details
-        const visitor = await Visitor.findById(visitorId);
-        const exhibitor = await Exhibitor.findById(exhibitorId);
+  try {
+    // Fetch the visitor and exhibitor details
+    const visitor = await Visitor.findById(visitorId);
+    const exhibitor = await Exhibitor.findById(exhibitorId);
 
-        if (!visitor || !exhibitor) {
-            throw new Error("Visitor or Exhibitor not found");
-        }
+    if (!visitor || !exhibitor) {
+      throw new Error("Visitor or Exhibitor not found");
+    }
 
-        // Define email content for visitor and exhibitor
-        const visitorEmailContent = `<!DOCTYPE html>
+    // Define email content for visitor and exhibitor
+    const visitorEmailContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1037,6 +1177,17 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       padding: 10px;
       background-color: #f9f9f9;
     }
+    .social-media {
+      margin-top: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     @media (max-width: 600px) {
       .container {
         padding: 15px;
@@ -1057,16 +1208,28 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       <p>We will notify you once the booking is confirmed.</p>
       <p>Thank you for your patience.</p>
     </div>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <div class="footer">
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+      <div class="social-media">
+        <a href="https://www.facebook.com/neofairs" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+        </a>
+        <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+        </a>
+        <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+        </a>
+      </div>
     </div>
   </div>
 </body>
 </html>
+
 `;
 
-        const exhibitorEmailContent = `<!DOCTYPE html>
+    const exhibitorEmailContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1107,6 +1270,17 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       padding: 10px;
       background-color: #f9f9f9;
     }
+    .social-media {
+      margin-top: 10px;
+    }
+    .social-media a {
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .social-media img {
+      width: 24px;
+      height: 24px;
+    }
     @media (max-width: 600px) {
       .container {
         padding: 15px;
@@ -1127,53 +1301,65 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       <p>Please review the request and confirm or deny it at your earliest convenience.</p>
       <p>Thank you!</p>
     </div>
-    <!-- Footer -->
+    <!-- Footer with Social Media Links -->
     <div class="footer">
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+      <div class="social-media">
+        <a href="https://www.facebook.com/neofairs" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+        </a>
+        <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+        </a>
+        <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
+          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+        </a>
+      </div>
     </div>
   </div>
 </body>
 </html>
+
 `;
 
-        if (visitor.email) {
-            // Send email to visitor
-            let visitorInfo = await transporter.sendMail({
-                from: "enquiry@neofairs.com",
-                to: visitor.email,
-                subject: "Booking Request Submitted",
-                html: visitorEmailContent,
-            });
-        }
-
-
-        // Send email to exhibitor
-        let exhibitorInfo = await transporter.sendMail({
-            from: "enquiry@neofairs.com",
-            to: exhibitor.email,
-            subject: "New Booking Request",
-            html: exhibitorEmailContent,
-        });
-        visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.`);
-        exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has requested a booking with you on ${slotDetails.date}.`);
-    } catch (error) {
-        console.error("Error sending booking request email:", error);
-        throw error;
+    if (visitor.email) {
+      // Send email to visitor
+      let visitorInfo = await transporter.sendMail({
+        from: "enquiry@neofairs.com",
+        to: visitor.email,
+        subject: "Booking Request Submitted",
+        html: visitorEmailContent,
+      });
     }
+
+
+    // Send email to exhibitor
+    let exhibitorInfo = await transporter.sendMail({
+      from: "enquiry@neofairs.com",
+      to: exhibitor.email,
+      subject: "New Booking Request",
+      html: exhibitorEmailContent,
+    });
+    visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.`);
+    exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has requested a booking with you on ${slotDetails.date}.`);
+  } catch (error) {
+    console.error("Error sending booking request email:", error);
+    throw error;
+  }
 };
 
 emailController.sendStallVisitSMS = async function (req, res) {
-    try {
-        const { visitorId, exhibitorId } = req.body;
-        // Fetch the visitor and exhibitor details
-        const visitor = await Visitor.findById(visitorId);
-        const exhibitor = await Exhibitor.findById(exhibitorId);
+  try {
+    const { visitorId, exhibitorId } = req.body;
+    // Fetch the visitor and exhibitor details
+    const visitor = await Visitor.findById(visitorId);
+    const exhibitor = await Exhibitor.findById(exhibitorId);
 
-        exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has visited the stall ${moment().format('DD-MM-YYYY HH:mm A')}.`);
-    } catch (error) {
-        console.error("Error sending booking request email:", error);
-        throw error;
-    }
+    exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has visited the stall ${moment().format('DD-MM-YYYY HH:mm A')}.`);
+  } catch (error) {
+    console.error("Error sending booking request email:", error);
+    throw error;
+  }
 };
 
 
