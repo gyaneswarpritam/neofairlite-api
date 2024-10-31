@@ -115,10 +115,15 @@ exports.login = async (req, res) => {
 
         if (validation.success) {
             const { email, password } = req.body;
-            const visitor = await Visitor.findOne({ email, active: true, isVerified: true, emailVerified: true });
+            const visitorExist = await Visitor.findOne({ email });
 
-            if (!visitor) {
+            if (!visitorExist) {
                 return res.status(404).json({ status: 0, message: 'Email ID doesn’t exist. Please register.' });
+            }
+
+            const visitor = await Visitor.findOne({ email, active: true, isVerified: true, emailVerified: true });
+            if (!visitor) {
+                return res.status(404).json({ status: 0, message: 'Email Verification Pending. Please try after verifying email' });
             }
 
             const isMatch = await bcrypt.compare(password, visitor.password);
