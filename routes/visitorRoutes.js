@@ -42,7 +42,7 @@ passport.use('jwt-visitor', new JwtStrategy(jwtOptions, (jwtPayload, done) => {
 router.post('/register', visitorController.register);
 router.post('/login', visitorController.login);
 router.post('/login-by-phone', visitorController.loginByPhone);
-router.post('/logout', visitorController.loggedOut);
+router.get('/logout/:id', visitorController.loggedOut);
 router.post('/verifyotp', visitorController.verifyOtp);
 router.post('/requestotp', visitorController.requestOtp);
 router.post('/verify-email', visitorController.verifyEmail);
