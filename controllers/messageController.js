@@ -28,9 +28,10 @@ module.exports.getChatUser = async (req, res, next) => {
   const visitorId = req.params.id;
 
   try {
+    // Find all messages that include the visitorId in the users array
     const messages = await Messages.find({
       users: { $in: [visitorId] }
-    });
+    }).sort({ updatedAt: -1 }); // Sort by most recent first
 
     const userChatInfo = {};
     messages.forEach(message => {
@@ -40,20 +41,49 @@ module.exports.getChatUser = async (req, res, next) => {
             userChatInfo[user] = {
               unread: 0,
               lastMessage: null,
+              lastMessageFromVisitor: null,
+              lastMessageFromExhibitor: null,
             };
           }
-          if (!userChatInfo[user].lastMessage || message.updatedAt > userChatInfo[user].lastMessage.updatedAt) {
-            userChatInfo[user].lastMessage = message;
+
+          // Update lastMessage based on who sent it
+          if (message.sender.toString() === visitorId) {
+            if (
+              !userChatInfo[user].lastMessageFromVisitor ||
+              message.updatedAt > userChatInfo[user].lastMessageFromVisitor.updatedAt
+            ) {
+              userChatInfo[user].lastMessageFromVisitor = message;
+            }
+          } else {
+            if (
+              !userChatInfo[user].lastMessageFromExhibitor ||
+              message.updatedAt > userChatInfo[user].lastMessageFromExhibitor.updatedAt
+            ) {
+              userChatInfo[user].lastMessageFromExhibitor = message;
+            }
+
+            // Count unread messages if they are from the exhibitor and not read
+            if (!message.read) {
+              userChatInfo[user].unread++;
+            }
           }
-          if (!message.read && message.sender.toString() !== visitorId) {
-            userChatInfo[user].unread++;
-          }
+
+          // Determine the latest message between visitor and exhibitor
+          userChatInfo[user].lastMessage =
+            (userChatInfo[user].lastMessageFromVisitor && userChatInfo[user].lastMessageFromExhibitor)
+              ? (userChatInfo[user].lastMessageFromVisitor.updatedAt > userChatInfo[user].lastMessageFromExhibitor.updatedAt
+                ? userChatInfo[user].lastMessageFromVisitor
+                : userChatInfo[user].lastMessageFromExhibitor)
+              : (userChatInfo[user].lastMessageFromVisitor || userChatInfo[user].lastMessageFromExhibitor);
         }
       });
     });
 
+    // Get all unique user IDs to fetch visitor details
     const userIds = Object.keys(userChatInfo);
     const visitors = await Visitor.find({ _id: { $in: userIds } });
+
+    // Format visitor data with chat information
     const modifiedVisitors = visitors.map(visitor => {
       const chatInfo = userChatInfo[visitor._id.toString()];
       return {
@@ -62,12 +92,14 @@ module.exports.getChatUser = async (req, res, next) => {
         email: visitor.email,
         companyName: visitor.companyName,
         unread: chatInfo.unread,
-        lastMessage: chatInfo.lastMessage.message.text,
+        lastMessage: chatInfo.lastMessage.message.text, // Assuming message has a 'text' field
+        lastMessageFrom: chatInfo.lastMessage.sender.toString() === visitorId ? 'Visitor' : 'Exhibitor'
       };
     });
 
     const successObj = successResponse('Chat Visitor List', modifiedVisitors);
     res.status(successObj.status).send(successObj);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });

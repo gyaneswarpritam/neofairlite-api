@@ -31,7 +31,7 @@ module.exports.getChatUser = async (req, res, next) => {
   try {
     const messages = await ExhibitorMessages.find({
       users: { $in: [exhibitorId] }
-    });
+    }).sort({ updatedAt: -1 });
 
     const userChatInfo = {};
     messages.forEach(message => {
@@ -41,20 +41,43 @@ module.exports.getChatUser = async (req, res, next) => {
             userChatInfo[user] = {
               unread: 0,
               lastMessage: null,
+              lastMessageFromVisitor: null,
+              lastMessageFromExhibitor: null,
             };
           }
-          if (!userChatInfo[user].lastMessage || message.updatedAt > userChatInfo[user].lastMessage.updatedAt) {
-            userChatInfo[user].lastMessage = message;
+
+          if (message.sender.toString() === exhibitorId) {
+            if (
+              !userChatInfo[user].lastMessageFromExhibitor ||
+              message.updatedAt > userChatInfo[user].lastMessageFromExhibitor.updatedAt
+            ) {
+              userChatInfo[user].lastMessageFromExhibitor = message;
+            }
+          } else {
+            if (
+              !userChatInfo[user].lastMessageFromVisitor ||
+              message.updatedAt > userChatInfo[user].lastMessageFromVisitor.updatedAt
+            ) {
+              userChatInfo[user].lastMessageFromVisitor = message;
+            }
+            if (!message.read) {
+              userChatInfo[user].unread++;
+            }
           }
-          if (!message.read && message.sender.toString() !== exhibitorId) {
-            userChatInfo[user].unread++;
-          }
+
+          userChatInfo[user].lastMessage =
+            (userChatInfo[user].lastMessageFromVisitor && userChatInfo[user].lastMessageFromExhibitor)
+              ? (userChatInfo[user].lastMessageFromVisitor.updatedAt > userChatInfo[user].lastMessageFromExhibitor.updatedAt
+                ? userChatInfo[user].lastMessageFromVisitor
+                : userChatInfo[user].lastMessageFromExhibitor)
+              : (userChatInfo[user].lastMessageFromVisitor || userChatInfo[user].lastMessageFromExhibitor);
         }
       });
     });
 
     const userIds = Object.keys(userChatInfo);
     const visitors = await Exhibitor.find({ _id: { $in: userIds } });
+
     const modifiedVisitors = visitors.map(visitor => {
       const chatInfo = userChatInfo[visitor._id.toString()];
       return {
@@ -63,12 +86,14 @@ module.exports.getChatUser = async (req, res, next) => {
         email: visitor.email,
         companyName: visitor.companyName,
         unread: chatInfo.unread,
-        lastMessage: chatInfo.lastMessage.message.text,
+        lastMessage: chatInfo.lastMessage?.message?.text || "", // Use optional chaining to avoid errors
+        lastMessageFrom: chatInfo.lastMessage?.sender.toString() === exhibitorId ? 'Exhibitor' : 'Visitor'
       };
     });
 
     const successObj = successResponse('Chat Visitor List', modifiedVisitors);
     res.status(successObj.status).send(successObj);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
@@ -76,15 +101,13 @@ module.exports.getChatUser = async (req, res, next) => {
 };
 
 module.exports.getChatVisitors = async (req, res, next) => {
-  const visitorId = req.params.id; // Assuming visitorId is passed as a route parameter
+  const visitorId = req.params.id;
 
   try {
-    // Find messages where the current user (visitor) is either the sender or receiver
     const messages = await ExhibitorMessages.find({
       users: { $in: [visitorId] }
-    });
+    }).sort({ updatedAt: -1 });
 
-    // Initialize an object to store chat information for each user
     const userChatInfo = {};
     messages.forEach(message => {
       message.users.forEach(user => {
@@ -93,27 +116,44 @@ module.exports.getChatVisitors = async (req, res, next) => {
             userChatInfo[user] = {
               unread: 0,
               lastMessage: null,
+              lastMessageFromVisitor: null,
+              lastMessageFromExhibitor: null,
             };
           }
-          // Update the last message if the current message is newer
-          if (!userChatInfo[user].lastMessage || message.updatedAt > userChatInfo[user].lastMessage.updatedAt) {
-            userChatInfo[user].lastMessage = message;
+
+          if (message.sender.toString() === visitorId) {
+            if (
+              !userChatInfo[user].lastMessageFromVisitor ||
+              message.updatedAt > userChatInfo[user].lastMessageFromVisitor.updatedAt
+            ) {
+              userChatInfo[user].lastMessageFromVisitor = message;
+            }
+          } else {
+            if (
+              !userChatInfo[user].lastMessageFromExhibitor ||
+              message.updatedAt > userChatInfo[user].lastMessageFromExhibitor.updatedAt
+            ) {
+              userChatInfo[user].lastMessageFromExhibitor = message;
+            }
+            if (!message.read) {
+              userChatInfo[user].unread++;
+            }
           }
-          // Increment the unread count if the message is unread and not sent by the current user
-          if (!message.read && message.sender.toString() !== visitorId) {
-            userChatInfo[user].unread++;
-          }
+
+          userChatInfo[user].lastMessage =
+            (userChatInfo[user].lastMessageFromVisitor && userChatInfo[user].lastMessageFromExhibitor)
+              ? (userChatInfo[user].lastMessageFromVisitor.updatedAt > userChatInfo[user].lastMessageFromExhibitor.updatedAt
+                ? userChatInfo[user].lastMessageFromVisitor
+                : userChatInfo[user].lastMessageFromExhibitor)
+              : (userChatInfo[user].lastMessageFromVisitor || userChatInfo[user].lastMessageFromExhibitor);
         }
       });
     });
 
-    // Extract unique user IDs from the userChatInfo object
     const userIds = Object.keys(userChatInfo);
-    // Fetch user details for the extracted user IDs
-    const visitors = await Visitor.find({ _id: { $in: userIds } });
+    const exhibitors = await Visitor.find({ _id: { $in: userIds } });
 
-    // Map the fetched user details to include chat information
-    const modifiedExhibitors = visitors.map(visitor => {
+    const modifiedExhibitors = exhibitors.map(visitor => {
       const chatInfo = userChatInfo[visitor._id.toString()];
       return {
         _id: visitor._id,
@@ -121,18 +161,19 @@ module.exports.getChatVisitors = async (req, res, next) => {
         email: visitor.email,
         companyName: visitor.companyName,
         unread: chatInfo.unread,
-        lastMessage: chatInfo.lastMessage.message.text,
+        lastMessage: chatInfo.lastMessage?.message?.text || "", // Use optional chaining
+        lastMessageFrom: chatInfo.lastMessage?.sender.toString() === visitorId ? 'Visitor' : 'Exhibitor'
       };
     });
 
     const successObj = successResponse('Chat Visitor List', modifiedExhibitors);
     res.status(successObj.status).send(successObj);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
 
 module.exports.checkChatUserExist = async (req, res, next) => {
   try {
