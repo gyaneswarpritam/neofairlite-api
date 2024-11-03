@@ -146,7 +146,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
         <h1>Welcome to NeoFairs</h1>
       </td>
     </tr>
@@ -273,7 +273,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
         <h1>Welcome to NeoFairs</h1>
       </td>
     </tr>
@@ -393,7 +393,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
         <h1>Registration Approved</h1>
       </td>
     </tr>
@@ -862,7 +862,7 @@ emailController.sendForgotPassword = async function (data, password) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo.png" alt="NeoFairs Logo">
+        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
         <h1>Confirmation</h1>
       </td>
     </tr>

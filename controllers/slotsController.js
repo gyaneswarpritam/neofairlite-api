@@ -330,7 +330,7 @@ exports.listBookedSlots = async (req, res) => {
     }
 
     // Find all bookings for the visitor that match the filter
-    const bookedSlots = await Booking.find(filter).populate('exhibitorId', 'companyName'); // Assuming exhibitorId references an exhibitor model with companyName field
+    const bookedSlots = await Booking.find(filter).populate('exhibitorId', 'companyName').sort({ createdAt: -1 }); // Assuming exhibitorId references an exhibitor model with companyName field
 
     // If no slots are found, return an empty list
     if (!bookedSlots.length) {
@@ -449,7 +449,7 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
     }
 
     // Find all bookings for the exhibitor that match the filter, populate visitor details
-    const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email'); // Assuming visitorId references a visitor model with name and email fields
+    const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email').sort({ createdAt: -1 }) // Assuming visitorId references a visitor model with name and email fields
 
     // If no slots are found, return an empty list
     if (!bookedSlots.length) {
@@ -552,7 +552,8 @@ exports.getVisitorsList = async (req, res) => {
           slotTime: 1,
           timeZone: 1,
           meetingLink: 1,
-          duration: 1 // Ensure duration is included
+          duration: 1,
+          createdAt: 1 // Include createdAt in projection for sorting
         },
       },
       {
@@ -574,15 +575,20 @@ exports.getVisitorsList = async (req, res) => {
           status: 1,
           slotTime: 1,
           meetingLink: 1,
-          duration: 1
+          duration: 1,
+          createdAt: 1 // Keep createdAt for sorting
         },
       },
+      {
+        $sort: { createdAt: -1 } // Sort by createdAt in descending order; use 1 for ascending
+      }
     ]);
 
     if (response && response.length > 0) {
       let SerialNo = 0;
       const formattedResponse = response.map((item) => {
         SerialNo++;
+
         // Convert slotTime to the visitor's booked timezone
         const dateInBookedTimeZone = momentTimeZone(item?.slotTime)
           .tz(item?.timeZone)
@@ -624,6 +630,7 @@ exports.getVisitorsList = async (req, res) => {
     });
   }
 };
+
 
 
 // exports.getVisitorsList = async (req, res) => {
