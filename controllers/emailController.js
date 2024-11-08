@@ -863,7 +863,7 @@ emailController.sendForgotPassword = async function (data, password) {
     <tr>
       <td class="header">
         <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
-        <h1>Confirmation</h1>
+        <h1>Forgot Password</h1>
       </td>
     </tr>
     <!-- Content -->
@@ -871,8 +871,7 @@ emailController.sendForgotPassword = async function (data, password) {
       <td class="content">
         <h2>Hello ${data?.name},</h2>
         <p>Thank you for joining NeoFairs.</p>
-        <p>Your registration is confirmed, and we are excited to have you with us.</p>
-        <a href="${confirmationLink}" class="button">Get Started</a>
+        <p>Your temporary password is <b>${password}</b></p>
         <p>If you didn’t request this, please ignore this email.</p>
       </td>
     </tr>
