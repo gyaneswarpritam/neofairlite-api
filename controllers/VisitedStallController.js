@@ -39,6 +39,7 @@ exports.getAllVisitedStallForVisitor = async (req, res) => {
                 path: 'stall',
                 select: 'stallName' // Select only the fields you need
             })
+            .sort({ createdAt: -1 })
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this visitor', []);
@@ -75,6 +76,7 @@ exports.getAllVisitedStallForExhibitor = async (req, res) => {
                 select: 'stallName', // Select only the fields you need
                 options: { strictPopulate: false }
             })
+            .sort({ createdAt: -1 })
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this exhibitor', []);
@@ -111,6 +113,7 @@ exports.getLiveVisitedStallForExhibitor = async (req, res) => {
                 path: 'stall',
                 select: 'stallName'
             })
+            .sort({ createdAt: -1 })
             .exec();
 
         if (!visitedStalls || visitedStalls.length === 0) {
@@ -133,9 +136,6 @@ exports.getLiveVisitedStallForExhibitor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-
-
 exports.getStallById = async (req, res) => {
     try {
         const stall = await Stall.findById(req.params.id)
