@@ -1354,7 +1354,7 @@ emailController.sendStallVisitSMS = async function (req, res) {
     const visitor = await Visitor.findById(visitorId);
     const exhibitor = await Exhibitor.findById(exhibitorId);
 
-    exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has visited the stall now.`);
+    exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor?.name} has visited the stall now.`);
   } catch (error) {
     console.error("Error sending booking request email:", error);
     throw error;
