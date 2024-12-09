@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
 
@@ -27,12 +26,13 @@ exports.uploadImageHandler = async function (req, res) {
     // Save the file to the upload directory
     fs.writeFileSync(filePath, myFile.buffer);
 
+    // Construct the image URL
+    const baseUrl = "https://shapes.neofairs.com/images/";
+    const imageUrl = `${baseUrl}${myFile.originalname}`;
+
     res.status(200).json({
       message: "Upload was successful",
-      data: {
-        fileName: myFile.originalname,
-        filePath: `/uploads/${myFile.originalname}`,
-      },
+      imageUrl: imageUrl, // Return the full image URL
     });
   } catch (error) {
     console.error(error);
@@ -42,6 +42,7 @@ exports.uploadImageHandler = async function (req, res) {
     });
   }
 };
+
 
 // const uploadImage = require("./helper");
 
