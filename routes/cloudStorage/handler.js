@@ -32,9 +32,7 @@ exports.uploadImageHandler = async function (req, res) {
 
     res.status(200).json({
       message: "Upload was successful",
-      data: {
-        imageUrl: imageUrl, // Return the full image URL
-      }
+      data: imageUrl,
     });
   } catch (error) {
     console.error(error);
