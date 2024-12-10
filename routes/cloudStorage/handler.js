@@ -12,8 +12,8 @@ exports.uploadImageHandler = async function (req, res) {
       });
     }
 
-    // Define the upload directory in the parent of the `routes` folder
-    const uploadDir = path.join(__dirname, "..", "..", "uploads");
+    // Define the upload directory outside the `api` folder
+    const uploadDir = path.join(__dirname, "../../../", "uploads");
 
     // Ensure the upload directory exists
     if (!fs.existsSync(uploadDir)) {
@@ -27,12 +27,12 @@ exports.uploadImageHandler = async function (req, res) {
     fs.writeFileSync(filePath, myFile.buffer);
 
     // Construct the image URL
-    const baseUrl = "https://shapes.neofairs.com/images/";
+    const baseUrl = "https://shapes.neofairs.com/uploads/";
     const imageUrl = `${baseUrl}${myFile.originalname}`;
 
     res.status(200).json({
       message: "Upload was successful",
-      data: imageUrl, // Return the full image URL
+      imageUrl: imageUrl, // Return the full image URL
     });
   } catch (error) {
     console.error(error);
