@@ -76,7 +76,7 @@ exports.getAllVisitedStallForExhibitor = async (req, res) => {
                 select: 'stallName', // Select only the fields you need
                 options: { strictPopulate: false }
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this exhibitor', []);

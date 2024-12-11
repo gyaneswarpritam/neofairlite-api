@@ -40,33 +40,36 @@ exports.getAllVisitedStall = async (req, res) => {
         const visitedStalls = await VisitedStall.find()
             .populate({
                 path: 'exhibitor',
-                select: 'name companyName email phone' // Select only the fields you need
+                select: 'name companyName email phone', // Select only the fields you need
+                options: { strictPopulate: false }
             })
             .populate({
                 path: 'visitor',
-                select: 'name companyName email phone' // Select only the fields you need
+                select: 'name companyName email phone', // Select only the fields you need
+                options: { strictPopulate: false }
             })
             .populate({
                 path: 'stall',
-                select: 'stallName' // Select only the fields you need
+                select: 'stallName', // Select only the fields you need
+                options: { strictPopulate: false }
             })
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this visitor', []);
-            res.status(successObj.status).send(successObj);
+            return res.status(successObj.status).send(successObj);
         }
 
         // Map the visited stalls to extract required information
         const stallList = visitedStalls.map(stall => ({
-            exhibitor: stall.exhibitor.name,
-            exhibitorCompanyName: stall.exhibitor.companyName,
-            exhibitorEmail: stall.exhibitor.email,
-            exhibitorPhone: stall.exhibitor.phone,
-            visitor: stall.visitor.name,
-            visitorCompanyName: stall.visitor.companyName,
-            visitorEmail: stall.visitor.email,
-            visitorPhone: stall.visitor.phone,
-            stallName: stall.stall.stallName,
+            exhibitor: stall.exhibitor?.name || null,
+            exhibitorCompanyName: stall.exhibitor?.companyName || null,
+            exhibitorEmail: stall.exhibitor?.email || null,
+            exhibitorPhone: stall.exhibitor?.phone || null,
+            visitor: stall.visitor?.name || null,
+            visitorCompanyName: stall.visitor?.companyName || null,
+            visitorEmail: stall.visitor?.email || null,
+            visitorPhone: stall.visitor?.phone || null,
+            stallName: stall.stall?.stallName || null,
             updatedAt: stall.updatedAt
         }));
 
