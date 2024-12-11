@@ -15,7 +15,6 @@ const crypto = require('crypto'); // To generate OTP
 const Otp = require('../models/otp');
 const emailController = require('./emailController');
 const { sendOtp } = require('../utils/otpService');
-const { base_url } = require('../config/config');
 
 // Register a new visitor
 exports.register = async (req, res) => {
