@@ -15,6 +15,7 @@ const crypto = require('crypto'); // To generate OTP
 const Otp = require('../models/otp');
 const emailController = require('./emailController');
 const { sendOtp } = require('../utils/otpService');
+const { base_url } = require('../config/config');
 
 // Register a new visitor
 exports.register = async (req, res) => {
@@ -66,8 +67,8 @@ exports.register = async (req, res) => {
 
         // Send registration email if verification method is 'email'
         if (verification === 'email') {
-            const baseUrl = req.protocol + '://' + req.get('host');
-            await emailController.sendRegisteredMail(visitorData._id, baseUrl);
+            // const baseUrl = req.protocol + '://' + req.get('host');
+            await emailController.sendRegisteredMail(visitorData._id, base_url);
         }
 
         // Respond with a success message
@@ -282,8 +283,8 @@ exports.verifyVisitorProfile = async (req, res) => {
         // Save the updated visitor
         const visitorData = await visitor.save();
         if (email) {
-            const baseUrl = req.protocol + '://' + req.get('host');
-            await emailController.sendRegisteredMail(visitorData._id, baseUrl);
+            // const baseUrl = req.protocol + '://' + req.get('host');
+            await emailController.sendRegisteredMail(visitorData._id, base_url);
         }
         const hasEmailAndPassword = visitor.email && visitor.password;
         const hasPhone = visitor.phone;
@@ -304,8 +305,8 @@ exports.verifyVisitorProfile = async (req, res) => {
 };
 exports.sendVerifyProfileEmailByLink = async (req, res) => {
     try {
-        const baseUrl = req.protocol + '://' + req.get('host');
-        await emailController.sendRegisteredMail(req.params.id, baseUrl);
+        // const baseUrl = req.protocol + '://' + req.get('host');
+        await emailController.sendRegisteredMail(req.params.id, base_url);
         return res.status(200).json({ status: 1, message: 'Verification email sent.' });
     } catch (error) {
         console.error(error);
