@@ -481,7 +481,6 @@ exports.getAllLoggedInVisitorList = async (req, res) => {
         if (visitors.length === 0) {
             const successObj = notFoundResponse('No Visitor List');
             res.status(successObj.status).send(successObj);
-            return;
         }
         const modifiedVisitors = visitors.map(visitor => ({
             _id: visitor._id,
