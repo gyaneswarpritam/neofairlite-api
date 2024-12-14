@@ -997,12 +997,12 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     <!-- Header -->
     <div class="header">
       <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-      <h1>Booking Confirmation</h1>
+      <h1>Booking Declined</h1>
     </div>
     <!-- Content -->
     <div class="content">
       <p>Dear ${visitor.name},</p>
-      <p>Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date}.</p>
+      <p>Your slot has been declined with ${exhibitor.name} on ${slotDetails.date}.</p>
       <p>If you have any questions, please contact ${exhibitor.name} at ${exhibitor.email}.</p>
       <p>We look forward to your participation!</p>
     </div>
@@ -1033,7 +1033,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>New Booking Alert</title>
+  <title>Booking Declined Alert</title>
   <style>
     body, table, td, p, h1 {
       font-family: Arial, sans-serif;
@@ -1097,12 +1097,12 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     <!-- Header -->
     <div class="header">
     <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-      <h1>New Booking Alert</h1>
+      <h1>Booking Declined Alert</h1>
     </div>
     <!-- Content -->
     <div class="content">
       <p>Dear ${exhibitor.name},</p>
-      <p>${visitor.name} has booked a slot with you on ${slotDetails.date}.</p>
+      <p>You have decliened ${visitor.name} booked a slot with you on ${slotDetails.date}.</p>
       <p>Visitor email: ${visitor.email}</p>
       <p>For further details, please contact the visitor or check your bookings dashboard.</p>
     </div>
