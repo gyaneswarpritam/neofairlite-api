@@ -93,7 +93,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       color: #fff;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -241,7 +241,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       color: #fff;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -365,7 +365,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
       color: #fff;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -827,7 +827,7 @@ emailController.sendForgotPassword = async function (data, password) {
       color: #fff;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -959,7 +959,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       padding: 10px;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -1059,7 +1059,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       padding: 10px;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -1195,7 +1195,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       padding: 10px;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
@@ -1294,7 +1294,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       padding: 10px;
     }
     .header img {
-      max-width: 150px;
+      max-width: 250px;
       height: auto;
       margin-bottom: 10px;
     }
