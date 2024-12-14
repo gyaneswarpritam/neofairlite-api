@@ -161,9 +161,9 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="header">
+        <a href="https://www.neofairs.com/" target="_blank">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-        </div>
+        </a>
         <p>&copy; 2024 NeoFairs. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -291,9 +291,9 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="header">
+        <a href="https://www.neofairs.com/" target="_blank">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-        </div>
+        </a>
         <p>&copy; 2024 NeoFairs. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -416,9 +416,9 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="header">
+        <a href="https://www.neofairs.com/" target="_blank">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-        </div>
+        </a>
         <p>&copy; 2024 NeoFairs. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -887,9 +887,9 @@ emailController.sendForgotPassword = async function (data, password) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="header">
+        <a href="https://www.neofairs.com/" target="_blank">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-        </div>
+        </a>
         <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
