@@ -1003,9 +1003,6 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     </div>
     <!-- Footer with Social Media Links -->
     <div class="footer">
-      <div class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-      </div>
 
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
@@ -1101,9 +1098,6 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     </div>
     <!-- Footer with Social Media Links -->
     <div class="footer">
-      <div class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-      </div>
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -1235,9 +1229,6 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
     </div>
     <!-- Footer with Social Media Links -->
     <div class="footer">
-      <div class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-      </div>
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -1332,9 +1323,6 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
     </div>
     <!-- Footer with Social Media Links -->
     <div class="footer">
-      <div class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
-      </div>
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/shapesproducts" target="_blank">
