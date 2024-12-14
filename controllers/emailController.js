@@ -933,7 +933,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Confirmation</title>
+  <title>Booking Decliened</title>
   <style>
     body, table, td, p, h1 {
       font-family: Arial, sans-serif;
@@ -1142,7 +1142,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     let exhibitorInfo = await transporter.sendMail({
       from: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "New Slot Booking Notification",
+      subject: "Booking Declined",
       html: exhibitorEmailContent,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
