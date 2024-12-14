@@ -98,8 +98,8 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       margin-bottom: 10px;
     }
     .footer-logo img {
-      max-width: 450px;
-      height: 80px;
+      max-width: 250px;
+      height: 50px;
     }
     .content {
       padding: 20px;
@@ -249,8 +249,8 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       margin-bottom: 10px;
     }
     .footer-logo img {
-      max-width: 450px;
-      height: 80px;
+      max-width: 250px;
+      height: 50px;
     }
     .content {
       padding: 20px;
@@ -376,8 +376,8 @@ emailController.sendApprovalExhibitorMail = async function (data) {
       margin-bottom: 10px;
     }
     .footer-logo img {
-      max-width: 450px;
-      height: 80px;
+      max-width: 250px;
+      height: 50px;
     }
     .content {
       padding: 20px;
@@ -841,8 +841,8 @@ emailController.sendForgotPassword = async function (data, password) {
       margin-bottom: 10px;
     }
     .footer-logo img {
-      max-width: 450px;
-      height: 80px;
+      max-width: 250px;
+      height: 50px;
     }
     .content {
       padding: 20px;
