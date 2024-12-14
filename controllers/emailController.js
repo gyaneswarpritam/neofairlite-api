@@ -161,7 +161,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank">
+        <a href="https://www.neofairs.com/" target="_blank" class="footer-logo">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </a>
         <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
@@ -291,7 +291,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank">
+        <a href="https://www.neofairs.com/" target="_blank" class="footer-logo">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </a>
         <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
@@ -367,6 +367,10 @@ emailController.sendApprovalExhibitorMail = async function (data) {
       height: auto;
       margin-bottom: 10px;
     }
+    .footer-logo img {
+      max-width: 150px;
+      height: auto;
+    }
     .content {
       padding: 20px;
       background-color: #fff;
@@ -416,7 +420,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank">
+        <a href="https://www.neofairs.com/" target="_blank" class="footer-logo">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </a>
         <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
@@ -887,7 +891,7 @@ emailController.sendForgotPassword = async function (data, password) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank">
+        <a href="https://www.neofairs.com/" target="_blank" class="footer-logo">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </a>
         <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
