@@ -97,6 +97,10 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       height: auto;
       margin-bottom: 10px;
     }
+    .footer-logo img {
+      max-width: 150px;
+      height: 100px;
+    }
     .content {
       padding: 20px;
       background-color: #fff;
@@ -161,9 +165,9 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank" >
-          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" class="footer-logo">
-        </a>
+<div class="footer-logo">
+          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" >
+        </div>
         <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -244,6 +248,10 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       height: auto;
       margin-bottom: 10px;
     }
+    .footer-logo img {
+      max-width: 150px;
+      height: 100px;
+    }
     .content {
       padding: 20px;
       background-color: #fff;
@@ -291,9 +299,9 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank" >
-          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" class="footer-logo">
-        </a>
+<div class="footer-logo">
+          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" >
+        </div>
         <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -367,7 +375,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
       height: auto;
       margin-bottom: 10px;
     }
-    .footer-logo {
+    .footer-logo img {
       max-width: 150px;
       height: 100px;
     }
@@ -420,9 +428,9 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank" >
-          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" class="footer-logo">
-        </a>
+<div class="footer-logo">
+          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" >
+        </div>
         <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
@@ -832,6 +840,10 @@ emailController.sendForgotPassword = async function (data, password) {
       height: auto;
       margin-bottom: 10px;
     }
+    .footer-logo img {
+      max-width: 150px;
+      height: 100px;
+    }
     .content {
       padding: 20px;
       background-color: #fff;
@@ -891,9 +903,9 @@ emailController.sendForgotPassword = async function (data, password) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <a href="https://www.neofairs.com/" target="_blank" >
-          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" class="footer-logo">
-        </a>
+<div class="footer-logo">
+          <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo" >
+        </div>
         <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/shapesproducts" target="_blank">
