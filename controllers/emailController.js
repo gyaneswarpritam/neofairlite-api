@@ -161,17 +161,6 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
         <div class="header">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </div>
@@ -302,17 +291,6 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
         <div class="header">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </div>
@@ -438,17 +416,6 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Footer with Social Media Links -->
     <tr>
       <td class="footer">
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
         <div class="header">
           <img src="https://shapes.neofairs.com/images/logo-white-neo.png" alt="Neofairs Logo">
         </div>
