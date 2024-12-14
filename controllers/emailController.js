@@ -958,6 +958,11 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       color: #fff;
       padding: 10px;
     }
+    .header img {
+      max-width: 150px;
+      height: auto;
+      margin-bottom: 10px;
+    }
     .content {
       background-color: #fff;
       padding: 20px;
@@ -1052,6 +1057,11 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       background-color: #FF5722;
       color: #fff;
       padding: 10px;
+    }
+    .header img {
+      max-width: 150px;
+      height: auto;
+      margin-bottom: 10px;
     }
     .content {
       background-color: #fff;
@@ -1184,6 +1194,11 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       color: #fff;
       padding: 10px;
     }
+    .header img {
+      max-width: 150px;
+      height: auto;
+      margin-bottom: 10px;
+    }
     .content {
       background-color: #fff;
       padding: 20px;
@@ -1278,6 +1293,11 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       color: #fff;
       padding: 10px;
     }
+    .header img {
+      max-width: 150px;
+      height: auto;
+      margin-bottom: 10px;
+    }
     .content {
       background-color: #fff;
       padding: 20px;
@@ -1311,7 +1331,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
   <div class="container">
     <!-- Header -->
     <div class="header">
-    <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
+      <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
       <h1>New Booking Request</h1>
     </div>
     <!-- Content -->
