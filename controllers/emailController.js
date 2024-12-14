@@ -146,7 +146,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
+        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
         <h1>Welcome to NeoFairs</h1>
       </td>
     </tr>
@@ -163,13 +163,13 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       <td class="footer">
         <div class="social-media">
           <a href="https://www.facebook.com/neofairs" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
           </a>
           <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
           </a>
           <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
           </a>
         </div>
         <p>&copy; 2024 NeoFairs. All rights reserved.</p>
@@ -273,7 +273,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
+        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
         <h1>Welcome to NeoFairs</h1>
       </td>
     </tr>
@@ -290,13 +290,13 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       <td class="footer">
         <div class="social-media">
           <a href="https://www.facebook.com/neofairs" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
           </a>
           <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
           </a>
           <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
           </a>
         </div>
         <p>&copy; 2024 NeoFairs. All rights reserved.</p>
@@ -393,7 +393,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
+        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
         <h1>Registration Approved</h1>
       </td>
     </tr>
@@ -412,13 +412,13 @@ emailController.sendApprovalExhibitorMail = async function (data) {
       <td class="footer">
         <div class="social-media">
           <a href="https://www.facebook.com/neofairs" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
           </a>
           <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
           </a>
           <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
           </a>
         </div>
         <p>&copy; 2024 NeoFairs. All rights reserved.</p>
@@ -862,7 +862,7 @@ emailController.sendForgotPassword = async function (data, password) {
     <!-- Header with Logo -->
     <tr>
       <td class="header">
-        <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/logo-white.png" alt="NeoFairs Logo">
+        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
         <h1>Forgot Password</h1>
       </td>
     </tr>
@@ -881,13 +881,13 @@ emailController.sendForgotPassword = async function (data, password) {
         <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/neofairs" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
           </a>
           <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
           </a>
           <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-            <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
           </a>
         </div>
       </td>
@@ -975,6 +975,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
   <div class="container">
     <!-- Header -->
     <div class="header">
+      <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
       <h1>Booking Confirmation</h1>
     </div>
     <!-- Content -->
@@ -989,13 +990,13 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/neofairs" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
         </a>
         <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
         </a>
         <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
         </a>
       </div>
     </div>
@@ -1068,6 +1069,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
   <div class="container">
     <!-- Header -->
     <div class="header">
+    <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
       <h1>New Booking Alert</h1>
     </div>
     <!-- Content -->
@@ -1082,13 +1084,13 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/neofairs" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
         </a>
         <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
         </a>
         <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
         </a>
       </div>
     </div>
@@ -1198,6 +1200,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
   <div class="container">
     <!-- Header -->
     <div class="header">
+    <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
       <h1>Booking Request Submitted</h1>
     </div>
     <!-- Content -->
@@ -1212,13 +1215,13 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/neofairs" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
         </a>
         <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
         </a>
         <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
         </a>
       </div>
     </div>
@@ -1291,6 +1294,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
   <div class="container">
     <!-- Header -->
     <div class="header">
+    <img src="https://shapes.neofairs.com/images/logo-white.png" alt="NeoFairs Logo">
       <h1>New Booking Request</h1>
     </div>
     <!-- Content -->
@@ -1305,13 +1309,13 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
       <div class="social-media">
         <a href="https://www.facebook.com/neofairs" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/facebook-email.png" alt="Facebook">
+          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
         </a>
         <a href="https://www.instagram.com/neofairs.virtualevents/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/instagram.png" alt="Twitter">
+          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
         </a>
         <a href="https://www.linkedin.com/company/neofairs/" target="_blank">
-          <img src="https://neofairs-web.s3.us-east-1.amazonaws.com/linkedin-email.png" alt="LinkedIn">
+          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
         </a>
       </div>
     </div>
