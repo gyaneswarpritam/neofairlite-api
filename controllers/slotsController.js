@@ -289,7 +289,7 @@ exports.sendBookingRequestMail = async (req, res) => {
 
 exports.sendBookingApproveRejectMail = async (req, res) => {
   try {
-    const { visitorId, exhibitorId, slotData } = req.body;
+    const { visitorId, exhibitorId, slotData, status } = req.body;
     const { startDate, endDate, timeZone } = slotData;
     const startTime = moment(startDate).tz(timeZone).format("hh:mm A");
     const endTime = moment(endDate).tz(timeZone).format("hh:mm A");
@@ -297,7 +297,7 @@ exports.sendBookingApproveRejectMail = async (req, res) => {
     slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
     slotData.time = `${startTime} - ${endTime}`;
 
-    emailController.sendBookingConfirmationMail(visitorId, exhibitorId, slotData)
+    emailController.sendBookingConfirmationMail(visitorId, exhibitorId, slotData, status)
     return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
 
   } catch (err) {

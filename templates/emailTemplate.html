@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification - Shapes</title>
+    <style>
+      body,
+      table,
+      td,
+      a {
+        text-decoration: none;
+        color: #333;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #f9f9f9;
+      }
+      .header,
+      .footer {
+        padding: 20px;
+        text-align: center;
+        background-color: #333;
+        color: #fff;
+      }
+      .header img {
+        max-width: 250px;
+        height: auto;
+        margin-bottom: 10px;
+      }
+      .footer-logo img {
+        max-width: 250px;
+        height: 50px;
+      }
+      .content {
+        padding: 20px;
+        background-color: #fff;
+      }
+      .cta-button {
+        background-color: #007bff;
+        color: #fff !important;
+        padding: 12px 30px;
+        text-align: center;
+        display: inline-block;
+        border-radius: 5px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-top: 20px;
+      }
+      .cta-button:hover {
+        background-color: #0056b3;
+      }
+      .social-media {
+        margin-bottom: 10px;
+      }
+      .social-media a {
+        margin: 0 5px;
+        display: inline-block;
+      }
+      .social-media img {
+        width: 24px;
+        height: 24px;
+      }
+      @media (max-width: 600px) {
+        .content {
+          padding: 15px;
+        }
+        .header,
+        .footer {
+          padding: 15px;
+        }
+        .cta-button {
+          padding: 10px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <table class="container" role="presentation">
+      <tr>
+        <td class="header">
+          <img
+            src="https://shapes.neofairs.com/images/logo-white.png"
+            alt="Shapes Logo"
+          />
+          <h1>Welcome to Shapes</h1>
+        </td>
+      </tr>
+      <tr>
+        <td class="content">
+          <p>
+            Thank you for registering. Please verify your email by clicking the
+            link below:
+          </p>
+          <a href="{{verificationUrl}}" class="cta-button">Verify Email</a>
+          <p>If you did not request this, please ignore this email.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="footer">
+          <p>
+            &copy; 2024
+            <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>.
+            All rights reserved.
+          </p>
+          <div class="social-media">
+            <a href="https://www.facebook.com/shapesproducts" target="_blank">
+              <img
+                src="https://shapes.neofairs.com/images/facebook-email.png"
+                alt="Facebook"
+              />
+            </a>
+            <a href="https://www.instagram.com/shapesproducts/" target="_blank">
+              <img
+                src="https://shapes.neofairs.com/images/instagram.png"
+                alt="Twitter"
+              />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/ashishjain1983/"
+              target="_blank"
+            >
+              <img
+                src="https://shapes.neofairs.com/images/linkedin-email.png"
+                alt="LinkedIn"
+              />
+            </a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

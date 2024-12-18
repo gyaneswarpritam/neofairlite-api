@@ -1,8 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+const handlebars = require('handlebars');
+
 var ses = require("nodemailer-ses-transport");
 const hbs = require("nodemailer-express-handlebars");
-const path = require("path");
 const crypto = require("crypto");
-const moment = require("moment");
 
 const awsKeys = {
   key: process.env.AWS_KEY,
@@ -44,148 +46,32 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
         verificationToken: verificationToken,
         verificationTokenExpires: Date.now() + 2592000000, // 30 days expiration
       },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!visitor) {
-      throw new Error("visitor not found");
+      throw new Error("Visitor not found");
     }
 
-    // Send the verification email
+    // Read and compile the email template
+    const templatePath = path.join(__dirname, '../templates', 'REGISTRATION_CONFIRMATION_MAIL.html');
+    const templateSource = fs.readFileSync(templatePath, 'utf-8');
+    const template = handlebars.compile(templateSource);
+
+    // Generate verification URL and populate the template
+    const verificationUrl = `${baseUrl}/visitor-verify?token=${verificationToken}`;
+    const htmlToSend = template({ verificationUrl, name: visitor.name });
+
+    // Send the email
     let info = await transporter.sendMail({
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: visitor.email,
       subject: "Verify Your Email Address",
-      html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Verification - Shapes</title>
-  <style>
-    body, table, td, a {
-      text-decoration: none;
-      color: #333;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-    }
-    .header, .footer {
-      padding: 20px;
-      text-align: center;
-      background-color: #333;
-      color: #fff;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .footer-logo img {
-      max-width: 250px;
-      height: 50px;
-    }
-    .content {
-      padding: 20px;
-      background-color: #fff;
-    }
-    .cta-button {
-      background-color: #007bff;
-      color: #fff !important;
-      padding: 12px 30px;
-      text-align: center;
-      display: inline-block;
-      border-radius: 5px;
-      font-weight: bold;
-      text-decoration: none;
-      margin-top: 20px;
-    }
-    .cta-button:hover {
-      background-color: #0056b3;
-    }
-    /* Social Media Links */
-    .social-media {
-      margin-bottom: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    /* Responsive styling */
-    @media (max-width: 600px) {
-      .content {
-        padding: 15px;
-      }
-      .header, .footer {
-        padding: 15px;
-      }
-      .cta-button {
-        padding: 10px 20px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <table class="container" role="presentation">
-    <!-- Header with Logo -->
-    <tr>
-      <td class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-        <h1>Welcome to Shapes </h1>
-      </td>
-    </tr>
-    <!-- Content -->
-    <tr>
-      <td class="content">
-        <p>Thank you for registering. Please verify your email by clicking the link below:</p>
-        <a href="${baseUrl}/visitor-verify?token=${verificationToken}" class="cta-button">Verify Email</a>
-        <p>If you did not request this, please ignore this email.</p>
-      </td>
-    </tr>
-    <!-- Footer with Social Media Links -->
-    <tr>
-      <td class="footer">
-        <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-
-`,
+      html: htmlToSend,
     });
     return info.messageId;
+
   } catch (error) {
     console.error("Error sending verification email:", error);
     throw error;
@@ -199,122 +85,20 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       throw new Error("exhibitor not found");
     }
 
+    // Read and compile the email template
+    const templatePath = path.join(__dirname, '../templates', 'REGISTRATION_CONFIRMATION_EXHIBITOR_MAIL.html');
+    const templateSource = fs.readFileSync(templatePath, 'utf-8');
+    const template = handlebars.compile(templateSource);
+
+    const htmlToSend = template({ name: exhibitor.name });
+
     // Send the verification email
     let info = await transporter.sendMail({
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
       subject: "Registration Confirmation",
-      html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Pending Approval - Shapes</title>
-  <style>
-    body, table, td, a {
-      text-decoration: none;
-      color: #333;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-    }
-    .header, .footer {
-      padding: 20px;
-      text-align: center;
-      background-color: #333;
-      color: #fff;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .footer-logo img {
-      max-width: 250px;
-      height: 50px;
-    }
-    .content {
-      padding: 20px;
-      background-color: #fff;
-    }
-    /* Social Media Links */
-    .social-media {
-      margin-bottom: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    /* Responsive styling */
-    @media (max-width: 600px) {
-      .content {
-        padding: 15px;
-      }
-      .header, .footer {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <table class="container" role="presentation">
-    <!-- Header with Logo -->
-    <tr>
-      <td class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-        <h1>Welcome to Shapes </h1>
-      </td>
-    </tr>
-    <!-- Content -->
-    <tr>
-      <td class="content">
-        <p>Thank you for registering. Your approval is pending, and we will get back to you soon.</p>
-        <br />
-        <p>If you did not request this, please ignore this email.</p>
-      </td>
-    </tr>
-    <!-- Footer with Social Media Links -->
-    <tr>
-      <td class="footer">
-        <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-
-`,
+      html: htmlToSend
     });
     return info.messageId;
   } catch (error) {
@@ -323,123 +107,19 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
   }
 };
 emailController.sendApprovalExhibitorMail = async function (data) {
+  // Read and compile the email template
+  const templatePath = path.join(__dirname, '../templates', 'REGISTRATION_APPROVAL_MAIL.html');
+  const templateSource = fs.readFileSync(templatePath, 'utf-8');
+  const template = handlebars.compile(templateSource);
+
+  const htmlToSend = template({ name: data.name });
+
   let info = await transporter.sendMail({
     from: "enquiry@neofairs.com",
     cc: "enquiry@neofairs.com",
     to: data["email"],
     subject: "Approval Email",
-    html: `
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Approved - Shapes</title>
-  <style>
-    body, table, td, a {
-      text-decoration: none;
-      color: #333;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-    }
-    .header, .footer {
-      padding: 20px;
-      text-align: center;
-      background-color: #333;
-      color: #fff;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .footer-logo img {
-      max-width: 250px;
-      height: 50px;
-    }
-    .content {
-      padding: 20px;
-      background-color: #fff;
-    }
-    /* Social Media Links */
-    .social-media {
-      margin-bottom: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    /* Responsive styling */
-    @media (max-width: 600px) {
-      .content {
-        padding: 15px;
-      }
-      .header, .footer {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <table class="container" role="presentation">
-    <!-- Header with Logo -->
-    <tr>
-      <td class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-        <h1>Registration Approved</h1>
-      </td>
-    </tr>
-    <!-- Content -->
-    <tr>
-      <td class="content">
-        <h2>Hello ${data?.name},</h2>
-        <p>Thank you for registering with us.</p>
-        <p>We are pleased to inform you that the approval process has been successfully completed.</p>
-        <br />
-        <p>If you did not request this, please ignore this email.</p>
-      </td>
-    </tr>
-    <!-- Footer with Social Media Links -->
-    <tr>
-      <td class="footer">
-        <p>&copy; 2024 <a href="https://www.neofairs.com/" target="_blank">NeoFairs</a>. All rights reserved.</p>
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-        `,
+    html: htmlToSend
   });
   return info.messageId;
 };
@@ -786,138 +466,24 @@ emailController.sendApprovalExhibitorMail = async function (data) {
 //     return info.messageId;
 // };
 emailController.sendForgotPassword = async function (data, password) {
+  // Read and compile the email template
+  const templatePath = path.join(__dirname, '../templates', 'FORGET_PASSWORD_MAIL.html');
+  const templateSource = fs.readFileSync(templatePath, 'utf-8');
+  const template = handlebars.compile(templateSource);
+
+  const htmlToSend = template({ name: data.name, password });
+
   let info = await transporter.sendMail({
     from: "enquiry@neofairs.com",
     cc: "enquiry@neofairs.com",
     to: data["email"],
     subject: "Forgot Password Email",
-    html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmation - Shapes</title>
-  <style>
-    body, table, td, a {
-      text-decoration: none;
-      color: #333;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-    }
-    .header, .footer {
-      padding: 20px;
-      text-align: center;
-      background-color: #333;
-      color: #fff;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .footer-logo img {
-      max-width: 250px;
-      height: 50px;
-    }
-    .content {
-      padding: 20px;
-      background-color: #fff;
-      text-align: left;
-    }
-    .button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background-color: #4599e8;
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-    /* Social Media Links */
-    .social-media {
-      margin-top: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    /* Responsive styling */
-    @media (max-width: 600px) {
-      .content {
-        padding: 15px;
-      }
-      .header, .footer {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <table class="container" role="presentation">
-    <!-- Header with Logo -->
-    <tr>
-      <td class="header">
-        <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-        <h1>Forgot Password</h1>
-      </td>
-    </tr>
-    <!-- Content -->
-    <tr>
-      <td class="content">
-        <h2>Hello ${data?.name},</h2>
-        <p>Thank you for joining Shapes.</p>
-        <p>Your temporary password is <b>${password}</b></p>
-        <p>If you didn’t request this, please ignore this email.</p>
-      </td>
-    </tr>
-    <!-- Footer with Social Media Links -->
-    <tr>
-      <td class="footer">
-        <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
-        <div class="social-media">
-          <a href="https://www.facebook.com/shapesproducts" target="_blank">
-            <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-          </a>
-          <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-          </a>
-          <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-            <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-          </a>
-        </div>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-
-`,
+    html: htmlToSend
   });
   return info.messageId;
 };
 
-emailController.sendBookingConfirmationMail = async function (visitorId, exhibitorId, slotDetails) {
+emailController.sendBookingConfirmationMail = async function (visitorId, exhibitorId, slotDetails, status) {
   try {
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);
@@ -926,214 +492,186 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     if (!visitor || !exhibitor) {
       throw new Error("Visitor or Exhibitor not found");
     }
+    let templatePathVisitor;
+    let templatePathExhibitor;
+    // Read and compile the email template
+    if (status == "approve") {
+      templatePathVisitor = path.join(__dirname, '../templates', 'MEETING_CONFIRMATION_VISITOR_MAIL.html');
+      templatePathExhibitor = path.join(__dirname, '../templates', 'MEETING_CONFIRMATION_EXHIBITOR_MAIL.html');
+    } else {
+      templatePathVisitor = path.join(__dirname, '../templates', 'MEETING_DECLINED_VISITOR_MAIL.html');
+      templatePathExhibitor = path.join(__dirname, '../templates', 'MEETING_DECLINED_EXHIBITOR_MAIL.html');
+    }
+    const templateSourceVisitor = fs.readFileSync(templatePathVisitor, 'utf-8');
+    const templateVisitor = handlebars.compile(templateSourceVisitor);
+    const templateSourceExhibitor = fs.readFileSync(templatePathExhibitor, 'utf-8');
+    const templateExhibitor = handlebars.compile(templateSourceExhibitor);
 
-    // Define email content
-    const visitorEmailContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Decliened</title>
-  <style>
-    body, table, td, p, h1 {
-      font-family: Arial, sans-serif;
-      color: #333;
-      text-align: left;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      background-color: #4CAF50;
-      color: #fff;
-      padding: 10px;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .content {
-      background-color: #fff;
-      padding: 20px;
-    }
-    .footer {
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-      padding: 10px;
-      background-color: #f9f9f9;
-    }
-    .social-media {
-      margin-top: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-      <h1>Booking Declined</h1>
-    </div>
-    <!-- Content -->
-    <div class="content">
-      <p>Dear ${visitor.name},</p>
-      <p>Your slot has been declined with ${exhibitor.name} on ${slotDetails.date}.</p>
-      <p>If you have any questions, please contact ${exhibitor.name} at ${exhibitor.email}.</p>
-      <p>We look forward to your participation!</p>
-    </div>
-    <!-- Footer with Social Media Links -->
-    <div class="footer">
+    const htmlToSendVisitor = templateVisitor({
+      visitorName: visitor.name,
+      visitorEmail: visitor.email,
+      exhibitorName: exhibitor.name,
+      slotDate: slotDetails.date,
+      exhibitorEmail: exhibitor.email
+    });
+    const htmlToSendExhibitor = templateExhibitor({
+      visitorName: visitor.name,
+      visitorEmail: visitor.email,
+      exhibitorName: exhibitor.name,
+      slotDate: slotDetails.date,
+      exhibitorEmail: exhibitor.email
+    });
+    //     // Define email content
+    //     const visitorEmailContent = `<!DOCTYPE html>
+    // <html lang="en">
+    // <head>
+    //   <meta charset="UTF-8">
+    //   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //   <title>Booking Decliened</title>
 
-      <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
-      <div class="social-media">
-        <a href="https://www.facebook.com/shapesproducts" target="_blank">
-          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-        </a>
-        <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-        </a>
-        <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-        </a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+    // </head>
+    // <body>
+    //   <div class="container">
+    //     <!-- Header -->
+    //     <div class="header">
+    //       <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
+    //       <h1>Booking Declined</h1>
+    //     </div>
+    //     <!-- Content -->
+    //     <div class="content">
+    //       <p>Dear ${visitor.name},</p>
+    //       <p>Your slot has been declined with ${exhibitor.name} on ${slotDetails.date}.</p>
+    //       <p>If you have any questions, please contact ${exhibitor.name} at ${exhibitor.email}.</p>
+    //       <p>We look forward to your participation!</p>
+    //     </div>
+    //     <!-- Footer with Social Media Links -->
+    //     <div class="footer">
 
-`;
+    //       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+    //       <div class="social-media">
+    //         <a href="https://www.facebook.com/shapesproducts" target="_blank">
+    //           <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
+    //         </a>
+    //         <a href="https://www.instagram.com/shapesproducts/" target="_blank">
+    //           <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
+    //         </a>
+    //         <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
+    //           <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
+    //         </a>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </body>
+    // </html>
 
-    const exhibitorEmailContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Declined Alert</title>
-  <style>
-    body, table, td, p, h1 {
-      font-family: Arial, sans-serif;
-      color: #333;
-      text-align: left;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      background-color: #FF5722;
-      color: #fff;
-      padding: 10px;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .content {
-      background-color: #fff;
-      padding: 20px;
-    }
-    .footer {
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-      padding: 10px;
-      background-color: #f9f9f9;
-    }
-    .social-media {
-      margin-top: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-    <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-      <h1>Booking Declined Alert</h1>
-    </div>
-    <!-- Content -->
-    <div class="content">
-      <p>Dear ${exhibitor.name},</p>
-      <p>You have decliened ${visitor.name} booked a slot with you on ${slotDetails.date}.</p>
-      <p>Visitor email: ${visitor.email}</p>
-      <p>For further details, please contact the visitor or check your bookings dashboard.</p>
-    </div>
-    <!-- Footer with Social Media Links -->
-    <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
-      <div class="social-media">
-        <a href="https://www.facebook.com/shapesproducts" target="_blank">
-          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-        </a>
-        <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-        </a>
-        <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-        </a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+    // `;
 
-`;
+    //     const exhibitorEmailContent = `<!DOCTYPE html>
+    // <html lang="en">
+    // <head>
+    //   <meta charset="UTF-8">
+    //   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //   <title>Booking Declined Alert</title>
+    //   <style>
+    //     body, table, td, p, h1 {
+    //       font-family: Arial, sans-serif;
+    //       color: #333;
+    //       text-align: left;
+    //     }
+    //     body {
+    //       margin: 0;
+    //       padding: 0;
+    //       width: 100% !important;
+    //     }
+    //     .container {
+    //       width: 100%;
+    //       max-width: 600px;
+    //       margin: 0 auto;
+    //       background-color: #f9f9f9;
+    //       padding: 20px;
+    //     }
+    //     .header {
+    //       text-align: center;
+    //       background-color: #FF5722;
+    //       color: #fff;
+    //       padding: 10px;
+    //     }
+    //     .header img {
+    //       max-width: 250px;
+    //       height: auto;
+    //       margin-bottom: 10px;
+    //     }
+    //     .content {
+    //       background-color: #fff;
+    //       padding: 20px;
+    //     }
+    //     .footer {
+    //       text-align: center;
+    //       color: #666;
+    //       font-size: 12px;
+    //       padding: 10px;
+    //       background-color: #f9f9f9;
+    //     }
+    //     .social-media {
+    //       margin-top: 10px;
+    //     }
+    //     .social-media a {
+    //       margin: 0 5px;
+    //       display: inline-block;
+    //     }
+    //     .social-media img {
+    //       width: 24px;
+    //       height: 24px;
+    //     }
+    //     @media (max-width: 600px) {
+    //       .container {
+    //         padding: 15px;
+    //       }
+    //     }
+    //   </style>
+    // </head>
+    // <body>
+    //   <div class="container">
+    //     <!-- Header -->
+    //     <div class="header">
+    //     <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
+    //       <h1>Booking Declined Alert</h1>
+    //     </div>
+    //     <!-- Content -->
+    //     <div class="content">
+    //       <p>Dear ${exhibitor.name},</p>
+    //       <p>You have decliened ${visitor.name} booked a slot with you on ${slotDetails.date}.</p>
+    //       <p>Visitor email: ${visitor.email}</p>
+    //       <p>For further details, please contact the visitor or check your bookings dashboard.</p>
+    //     </div>
+    //     <!-- Footer with Social Media Links -->
+    //     <div class="footer">
+    //       <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
+    //       <div class="social-media">
+    //         <a href="https://www.facebook.com/shapesproducts" target="_blank">
+    //           <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
+    //         </a>
+    //         <a href="https://www.instagram.com/shapesproducts/" target="_blank">
+    //           <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
+    //         </a>
+    //         <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
+    //           <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
+    //         </a>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </body>
+    // </html>
+
+    // `;
 
     if (visitor.email) {
       // Send email to visitor
       let visitorInfo = await transporter.sendMail({
         from: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: "Slot Booking Confirmation",
-        html: visitorEmailContent,
+        subject: status == "approve" ? "Meeting Confirmation" : "Meeting Declined",
+        html: htmlToSendVisitor,
       });
     }
 
@@ -1142,8 +680,8 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     let exhibitorInfo = await transporter.sendMail({
       from: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "Booking Declined",
-      html: exhibitorEmailContent,
+      subject: status == "approve" ? "Meeting Confirmation" : "Meeting Declined",
+      html: htmlToSendExhibitor,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
     exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has booked a slot with you on ${slotDetails.date} .`);
@@ -1163,204 +701,17 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       throw new Error("Visitor or Exhibitor not found");
     }
 
-    // Define email content for visitor and exhibitor
-    const visitorEmailContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Request Submitted</title>
-  <style>
-    body, table, td, p, h1 {
-      font-family: Arial, sans-serif;
-      color: #333;
-      text-align: left;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      background-color: #2196F3;
-      color: #fff;
-      padding: 10px;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .content {
-      background-color: #fff;
-      padding: 20px;
-    }
-    .footer {
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-      padding: 10px;
-      background-color: #f9f9f9;
-    }
-    .social-media {
-      margin-top: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-    <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-      <h1>Booking Request Submitted</h1>
-    </div>
-    <!-- Content -->
-    <div class="content">
-      <p>Dear ${visitor.name},</p>
-      <p>Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.</p>
-      <p>We will notify you once the booking is confirmed.</p>
-      <p>Thank you for your patience.</p>
-    </div>
-    <!-- Footer with Social Media Links -->
-    <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
-      <div class="social-media">
-        <a href="https://www.facebook.com/shapesproducts" target="_blank">
-          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-        </a>
-        <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-        </a>
-        <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-        </a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+    // Read and compile the email template
+    const templatePath = path.join(__dirname, '../templates', 'MEETING_REQUEST_VISITOR_MAIL.html');
+    const templateSource = fs.readFileSync(templatePath, 'utf-8');
+    const template = handlebars.compile(templateSource);
 
-`;
-
-    const exhibitorEmailContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>New Booking Request</title>
-  <style>
-    body, table, td, p, h1 {
-      font-family: Arial, sans-serif;
-      color: #333;
-      text-align: left;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100% !important;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      background-color: #4CAF50;
-      color: #fff;
-      padding: 10px;
-    }
-    .header img {
-      max-width: 250px;
-      height: auto;
-      margin-bottom: 10px;
-    }
-    .content {
-      background-color: #fff;
-      padding: 20px;
-    }
-    .footer {
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-      padding: 10px;
-      background-color: #f9f9f9;
-    }
-    .social-media {
-      margin-top: 10px;
-    }
-    .social-media a {
-      margin: 0 5px;
-      display: inline-block;
-    }
-    .social-media img {
-      width: 24px;
-      height: 24px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <img src="https://shapes.neofairs.com/images/logo-white.png" alt="Shapes Logo">
-      <h1>New Booking Request</h1>
-    </div>
-    <!-- Content -->
-    <div class="content">
-      <p>Dear ${exhibitor.name},</p>
-      <p>${visitor.name} has requested a booking with you on ${slotDetails.date}.</p>
-      <p>Please review the request and confirm or deny it at your earliest convenience.</p>
-      <p>Thank you!</p>
-    </div>
-    <!-- Footer with Social Media Links -->
-    <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} NeoFairs. All rights reserved.</p>
-      <div class="social-media">
-        <a href="https://www.facebook.com/shapesproducts" target="_blank">
-          <img src="https://shapes.neofairs.com/images/facebook-email.png" alt="Facebook">
-        </a>
-        <a href="https://www.instagram.com/shapesproducts/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/instagram.png" alt="Twitter">
-        </a>
-        <a href="https://www.linkedin.com/in/ashishjain1983/" target="_blank">
-          <img src="https://shapes.neofairs.com/images/linkedin-email.png" alt="LinkedIn">
-        </a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
-
-`;
+    const htmlToSend = template({
+      visitorName: visitor.name,
+      exhibitorName: exhibitor.name,
+      slotDate: slotDetails.date,
+      exhibitorEmail: exhibitor.email
+    });
 
     if (visitor.email) {
       // Send email to visitor
@@ -1368,17 +719,27 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
         from: "enquiry@neofairs.com",
         to: visitor.email,
         subject: "Booking Request Submitted",
-        html: visitorEmailContent,
+        html: htmlToSend,
       });
     }
 
+    // Read and compile the email template
+    const templatePathExhibitor = path.join(__dirname, '../templates', 'MEETING_REQUEST_EXHIBITOR_MAIL.html');
+    const templateSourceExhibitor = fs.readFileSync(templatePathExhibitor, 'utf-8');
+    const templateExhibitor = handlebars.compile(templateSourceExhibitor);
 
+    const htmlToSendExhibitor = templateExhibitor({
+      visitorName: visitor.name,
+      exhibitorName: exhibitor.name,
+      slotDate: slotDetails.date,
+      exhibitorEmail: exhibitor.email
+    });
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
       from: "enquiry@neofairs.com",
       to: exhibitor.email,
       subject: "New Booking Request",
-      html: exhibitorEmailContent,
+      html: htmlToSendExhibitor,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor.name} on ${slotDetails.date} has been submitted successfully.`);
     exhibitor.phone && sendPhoneMessage(exhibitor.phone, `${visitor.name} has requested a booking with you on ${slotDetails.date}.`);

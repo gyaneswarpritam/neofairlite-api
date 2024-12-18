@@ -20,15 +20,21 @@ exports.uploadImageHandler = async function (req, res) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
+    // Create a timestamped file name
+    const timestamp = Date.now();
+    const originalExtension = path.extname(myFile.originalname);
+    const baseName = path.basename(myFile.originalname, originalExtension);
+    const newFileName = `${baseName}_${timestamp}${originalExtension}`;
+
     // Define the file's destination path
-    const filePath = path.join(uploadDir, myFile.originalname);
+    const filePath = path.join(uploadDir, newFileName);
 
     // Save the file to the upload directory
     fs.writeFileSync(filePath, myFile.buffer);
 
     // Construct the image URL
     const baseUrl = "https://shapes.neofairs.com/uploads/";
-    const imageUrl = `${baseUrl}${myFile.originalname}`;
+    const imageUrl = `${baseUrl}${newFileName}`;
 
     res.status(200).json({
       message: "Upload was successful",
@@ -42,7 +48,6 @@ exports.uploadImageHandler = async function (req, res) {
     });
   }
 };
-
 
 // const uploadImage = require("./helper");
 
