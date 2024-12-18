@@ -54,7 +54,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     }
 
     // Read and compile the email template
-    const templatePath = path.join(__dirname, '../templates', 'REGISTRATION_CONFIRMATION_MAIL.html');
+    const templatePath = path.join(__dirname, '../templates', 'REGISTRATION_CONFIRMATION_VISITOR_MAIL.html');
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateSource);
 
