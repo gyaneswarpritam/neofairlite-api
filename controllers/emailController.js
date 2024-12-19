@@ -97,7 +97,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "Registration Confirmation",
+      subject: "Welcome to Neofairs – Your Registration is Pending Approval",
       html: htmlToSend
     });
     return info.messageId;

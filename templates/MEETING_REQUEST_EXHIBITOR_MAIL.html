@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Meeting Request</title>
+    <title>You Have a New Meeting Request from a Visitor</title>
   </head>
   <body
     style="
@@ -64,7 +64,7 @@
           style="background: #f7f7f7; color: #ffffff"
         >
           <h1 style="margin: 0; font-size: 30px; font-weight: 600; color: #000">
-            New Meeting Request
+            You Have a New Meeting Request from a Visitor
           </h1>
         </td>
       </tr>
@@ -98,22 +98,37 @@
         <td style="padding: 40px 30px; color: #333333">
           <p style="margin: 0 0 15px">Dear {{exhibitorName}},</p>
           <p style="margin: 0 0 15px; color: #9498a7">
-            You have received a new meeting request for the upcoming event.
+            We’re excited to inform you that you’ve received a meeting request
+            from a visitor on <b>Shapes</b>!
           </p>
-          <p style="margin: 0 0 15px">Meeting Details:</p>
+          <p style="margin: 0 0 15px">
+            Here are the details of the meeting request:
+          </p>
           <ul style="margin: 0 0 15px; padding: 0; list-style: none">
             <li style="margin: 5px 0; color: #9498a7">
-              <strong>Requested By:</strong> {{visitorName}}
+              <strong>Visitor Name: </strong> {{visitorName}}
             </li>
             <li style="margin: 5px 0; color: #9498a7">
-              <strong>Date :</strong> {{slotDate}}
+              <strong>Requested Meeting Date: </strong> {{slotDate}}
             </li>
           </ul>
           <p style="margin: 0 0 15px; color: #9498a7">
-            Please review the request and confirm or decliened it at your
-            earliest convenience.
+            To confirm the meeting, please log in to your account on
+            <b>Shapes</b> and visit your dashboard. From there, you can review
+            the request and confirm or decline.
           </p>
-          <p style="margin: 0 0 15px; color: #9498a7">Thank you!</p>
+          <p style="margin: 0 0 15px; color: #9498a7">
+            If you need any assistance or have any questions, feel free to
+            contact us at support@neofairs.com. We’re here to help ensure your
+            meeting runs smoothly.
+          </p>
+          <p style="margin: 0 0 15px; color: #9498a7">
+            We look forward to your successful connection with {{visitorName}}!
+          </p>
+          <p style="margin: 0 0 15px; color: #9498a7">Best regards,</p>
+          <p style="margin: 0 0 15px; color: #9498a7">
+            <b>The Shapes Team</b>
+          </p>
         </td>
       </tr>
       <tr style="background: #ffffff">
@@ -121,7 +136,7 @@
           style="
             margin: 0;
             font-weight: 500;
-            padding: 0px 30px 30px 30px;
+            padding: 30px 30px;
             border-top: 1px solid #eeeeee;
             border-collapse: collapse;
           "
@@ -153,7 +168,7 @@
                   >
                     Shapes
                   </p>
-                  <!-- <img src="logo/logo/SHAPES_LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
+                  <!-- <img src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
                 </div>
               </tr>
               <tr>
@@ -226,29 +241,7 @@
                             >Instagram</a
                           >
                         </td>
-                        <td
-                          style="
-                            margin: 0;
-                            padding: 0;
-                            font-weight: 500;
-                            font-size: 15px;
-                            color: #666666;
-                            border-right: 1px solid #dbe2eb;
-                            border-collapse: collapse;
-                          "
-                        >
-                          <a
-                            href="https://www.linkedin.com/in/ashishjain1983/"
-                            style="
-                              color: #636262;
-                              text-decoration: none;
-                              padding: 0 10px;
-                            "
-                            target="_blank"
-                            data-saferedirecturl=""
-                            >LinkedIn</a
-                          >
-                        </td>
+
                         <td
                           style="
                             margin: 0;
@@ -336,11 +329,35 @@
                     border-collapse: collapse;
                   "
                 >
-                  If you have questions or need help, don't hesitate to contact
-                  our support team!
+                  <p><b>Privacy Notice:</b></p>
+                  <p>
+                    By registering with Neofairs, you agree to our
+                    <a href="https://www.neofairs.com/privacy" target="_blank"
+                      >Privacy Policy</a
+                    >
+                    and
+                    <a href="https://www.neofairs.com/terms" target="_blank"
+                      >Terms of Service</a
+                    >. Your information will be used solely for event-related
+                    purposes, and we respect your privacy. You can opt out of
+                    receiving emails at any time by clicking the unsubscribe
+                    link.
+                  </p>
+                  <p><b>Technical Support:</b></p>
+                  <p>
+                    If you encounter any issues while using the platform, our
+                    support team is available to assist you. Please reach out to
+                    us at <b>support@neofairs.com</b> for help.
+                  </p>
+                  <p><b>Copyright Notice:</b></p>
+                  <p>
+                    All content on the Neofairs platform, including logos,
+                    images, and text, is protected by copyright laws.
+                    Unauthorized use or reproduction is prohibited.
+                  </p>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td
                   style="
                     margin: 0;
@@ -354,11 +371,11 @@
                   Lorem, ipsum, 123, ABC Street, Lorem, ipsum, ABC main road.,
                   Bangalore, Lorem, ipsum, 123456, India.
                 </td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
 
-          <table
+          <!-- <table
             role="presentation"
             border="0"
             cellpadding="0"
@@ -409,7 +426,7 @@
                 </td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
         </td>
       </tr>
 

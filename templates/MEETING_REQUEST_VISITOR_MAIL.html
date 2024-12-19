@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Meeting Request</title>
+    <title>Your Meeting Request Has Been Submitted!</title>
   </head>
   <body
     style="
@@ -64,7 +64,7 @@
           style="background: #f7f7f7; color: #ffffff"
         >
           <h1 style="margin: 0; font-size: 30px; font-weight: 600; color: #000">
-            New Meeting Request
+            Your Meeting Request Has Been Submitted!
           </h1>
         </td>
       </tr>
@@ -98,7 +98,18 @@
         <td style="padding: 40px 30px; color: #333333">
           <p style="margin: 0 0 15px">Dear {{visitorName}},</p>
           <p style="margin: 0 0 15px; color: #9498a7">
-            You have requested a new meeting request for the upcoming event.
+            Thank you for submitting a meeting request with Shapes! We’ve received your request, and our team will review it shortly.
+          </p>
+          <p style="margin: 0 0 15px; color: #9498a7">
+            Once your meeting request is confirmed, you’ll receive a notification with the details. In the meantime, feel free to explore our virtual stall and check out other exciting opportunities available.
+          </p>
+          <p style="margin: 0 0 15px; color: #9498a7">
+            <b>What happens next:</b>
+            <ul>
+              <li>We will review your meeting request.</li>
+              <li>You will receive an email notification once the meeting is confirmed or if more details are needed.</li>
+              <li>Prepare to connect with our key decision makers in a face-to-face meeting, where you can discuss products, services, and more.</li>
+            </ul>
           </p>
           <p style="margin: 0 0 15px">Meeting Details:</p>
           <ul style="margin: 0 0 15px; padding: 0; list-style: none">
@@ -115,13 +126,7 @@
               <strong>Location:</strong> [Event Location]
             </li> -->
           </ul>
-          <p style="margin: 0 0 15px; color: #9498a7">
-            If you have any questions, please contact {{exhibitorName}} at
-            {{exhibitorEmail}}.
-          </p>
-          <p style="margin: 0 0 15px; color: #9498a7">
-            We look forward to your participation!
-          </p>
+          neofairlite-api/templates/REGISTRATION_CONFIRMATION_VISITOR_MAIL.html
         </td>
       </tr>
       <tr style="background: #ffffff">
@@ -129,7 +134,7 @@
           style="
             margin: 0;
             font-weight: 500;
-            padding: 0px 30px 30px 30px;
+            padding: 30px 30px;
             border-top: 1px solid #eeeeee;
             border-collapse: collapse;
           "
@@ -161,7 +166,7 @@
                   >
                     Shapes
                   </p>
-                  <!-- <img src="logo/logo/SHAPES_LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
+                  <!-- <img src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
                 </div>
               </tr>
               <tr>
@@ -234,29 +239,7 @@
                             >Instagram</a
                           >
                         </td>
-                        <td
-                          style="
-                            margin: 0;
-                            padding: 0;
-                            font-weight: 500;
-                            font-size: 15px;
-                            color: #666666;
-                            border-right: 1px solid #dbe2eb;
-                            border-collapse: collapse;
-                          "
-                        >
-                          <a
-                            href="https://www.linkedin.com/in/ashishjain1983/"
-                            style="
-                              color: #636262;
-                              text-decoration: none;
-                              padding: 0 10px;
-                            "
-                            target="_blank"
-                            data-saferedirecturl=""
-                            >LinkedIn</a
-                          >
-                        </td>
+
                         <td
                           style="
                             margin: 0;
@@ -344,11 +327,35 @@
                     border-collapse: collapse;
                   "
                 >
-                  If you have questions or need help, don't hesitate to contact
-                  our support team!
+                  <p><b>Privacy Notice:</b></p>
+                  <p>
+                    By registering with Neofairs, you agree to our
+                    <a href="https://www.neofairs.com/privacy" target="_blank"
+                      >Privacy Policy</a
+                    >
+                    and
+                    <a href="https://www.neofairs.com/terms" target="_blank"
+                      >Terms of Service</a
+                    >. Your information will be used solely for event-related
+                    purposes, and we respect your privacy. You can opt out of
+                    receiving emails at any time by clicking the unsubscribe
+                    link.
+                  </p>
+                  <p><b>Technical Support:</b></p>
+                  <p>
+                    If you encounter any issues while using the platform, our
+                    support team is available to assist you. Please reach out to
+                    us at <b>support@neofairs.com</b> for help.
+                  </p>
+                  <p><b>Copyright Notice:</b></p>
+                  <p>
+                    All content on the Neofairs platform, including logos,
+                    images, and text, is protected by copyright laws.
+                    Unauthorized use or reproduction is prohibited.
+                  </p>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td
                   style="
                     margin: 0;
@@ -362,11 +369,11 @@
                   Lorem, ipsum, 123, ABC Street, Lorem, ipsum, ABC main road.,
                   Bangalore, Lorem, ipsum, 123456, India.
                 </td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
 
-          <table
+          <!-- <table
             role="presentation"
             border="0"
             cellpadding="0"
@@ -417,7 +424,7 @@
                 </td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
         </td>
       </tr>
 

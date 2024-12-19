@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Meeting Declined</title>
+    <title>Meeting Request with {{visitorName}} Declined</title>
   </head>
   <body
     style="
@@ -64,41 +64,23 @@
           style="background: #f7f7f7; color: #ffffff"
         >
           <h1 style="margin: 0; font-size: 30px; font-weight: 600; color: #000">
-            Meeting Declined
+            Meeting Request with {{visitorName}} Declined
           </h1>
         </td>
       </tr>
-      <!-- <tr>
-        <td
-          style="
-            background: #f7f7f7;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 40px 20px;
-            border-radius: 10px 10px 0px 0px;
-          "
-        >
-          <img
-            src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png"
-            alt="logo"
-            height="70px"
-            style="border: 0; display: block; padding-bottom: 20px"
-          />
-
-          <h1 style="margin: 0; font-size: 30px; font-weight: 600; color: #000">
-            Meeting Declined
-          </h1>
-        </td>
-      </tr> -->
 
       <tr style="background: #ffffff; padding: 40px 30px">
         <td style="padding: 40px 30px; color: #333333">
-          <p style="margin: 10px 0 15px">Dear {{exhibitorName}},</p>
+          <p style="margin: 10px 0 15px">Hi {{exhibitorName}},</p>
           <p style="margin: 0 0 15px; font-size: 16px; color: #9498a7">
-            You have declined the meeting requested by {{visitorName}}.
+            We wanted to confirm that you have declined the meeting request from
+            {{visitorName}}.
+          </p>
+          <p style="margin: 0 0 15px; font-size: 16px; color: #9498a7">
+            While the meeting won’t take place as scheduled, we encourage you to
+            reach out directly to the visitor to suggest an alternative time.
+            This way, you can still connect and make the most of the
+            opportunity.
           </p>
           <p style="margin: 0 0 15px">Meeting Details:</p>
           <ul style="margin: 0 0 15px; padding: 0; list-style: none">
@@ -106,20 +88,21 @@
               <strong>Date:</strong> {{slotDate}}
             </li>
           </ul>
-          <!-- <a
-            href="[Schedule Link]"
-            style="
-              display: inline-block;
-              background: #bceb4e;
-              color: #ffffff;
-              text-decoration: none;
-              padding: 10px 20px;
-              border-radius: 5px;
-              margin: 15px 0;
-              font-size: 14px;
-            "
-            >View Exhibitors</a
-          > -->
+
+          <p style="margin: 0 0 15px; font-size: 16px; color: #9498a7">
+            If you need any assistance or have questions, please don’t hesitate
+            to contact us at support@neofairs.com. We’re happy to help!
+          </p>
+          <p style="margin: 0 0 15px; font-size: 16px; color: #9498a7">
+            Thank you for your continued participation, and we wish you the best
+            in connecting with potential clients.
+          </p>
+          <p style="margin: 0 0 15px; font-size: 16px; color: #9498a7">
+            Best regards,
+          </p>
+          <p style="margin: 0 0 15px; font-size: 16px; color: #9498a7">
+            <b>The Shapes Team</b>
+          </p>
         </td>
       </tr>
       <tr style="background: #ffffff">
@@ -127,7 +110,7 @@
           style="
             margin: 0;
             font-weight: 500;
-            padding: 0px 30px 30px 30px;
+            padding: 30px 30px;
             border-top: 1px solid #eeeeee;
             border-collapse: collapse;
           "
@@ -232,29 +215,7 @@
                             >Instagram</a
                           >
                         </td>
-                        <td
-                          style="
-                            margin: 0;
-                            padding: 0;
-                            font-weight: 500;
-                            font-size: 15px;
-                            color: #666666;
-                            border-right: 1px solid #dbe2eb;
-                            border-collapse: collapse;
-                          "
-                        >
-                          <a
-                            href="https://www.linkedin.com/in/ashishjain1983/"
-                            style="
-                              color: #636262;
-                              text-decoration: none;
-                              padding: 0 10px;
-                            "
-                            target="_blank"
-                            data-saferedirecturl=""
-                            >LinkedIn</a
-                          >
-                        </td>
+
                         <td
                           style="
                             margin: 0;
@@ -342,11 +303,35 @@
                     border-collapse: collapse;
                   "
                 >
-                  If you have questions or need help, don't hesitate to contact
-                  our support team!
+                  <p><b>Privacy Notice:</b></p>
+                  <p>
+                    By registering with Neofairs, you agree to our
+                    <a href="https://www.neofairs.com/privacy" target="_blank"
+                      >Privacy Policy</a
+                    >
+                    and
+                    <a href="https://www.neofairs.com/terms" target="_blank"
+                      >Terms of Service</a
+                    >. Your information will be used solely for event-related
+                    purposes, and we respect your privacy. You can opt out of
+                    receiving emails at any time by clicking the unsubscribe
+                    link.
+                  </p>
+                  <p><b>Technical Support:</b></p>
+                  <p>
+                    If you encounter any issues while using the platform, our
+                    support team is available to assist you. Please reach out to
+                    us at <b>support@neofairs.com</b> for help.
+                  </p>
+                  <p><b>Copyright Notice:</b></p>
+                  <p>
+                    All content on the Neofairs platform, including logos,
+                    images, and text, is protected by copyright laws.
+                    Unauthorized use or reproduction is prohibited.
+                  </p>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td
                   style="
                     margin: 0;
@@ -360,11 +345,11 @@
                   Lorem, ipsum, 123, ABC Street, Lorem, ipsum, ABC main road.,
                   Bangalore, Lorem, ipsum, 123456, India.
                 </td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
 
-          <table
+          <!-- <table
             role="presentation"
             border="0"
             cellpadding="0"
@@ -415,7 +400,7 @@
                 </td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
         </td>
       </tr>
 
